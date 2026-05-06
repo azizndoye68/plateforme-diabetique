@@ -1,0 +1,231 @@
+version: '3.8'
+
+services:
+
+  # ===== RABBITMQ =====
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - diabete-network
+
+  # ===== BASES DE DONNÉES =====
+  db-auth:
+    image: postgres:15
+    container_name: db-auth
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - diabete-network
+
+  db-patient:
+    image: postgres:15
+    container_name: db-patient
+    environment:
+      POSTGRES_DB: patient_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - diabete-network
+
+  db-medecin:
+    image: postgres:15
+    container_name: db-medecin
+    environment:
+      POSTGRES_DB: medecin_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - diabete-network
+
+  db-suivi:
+    image: postgres:15
+    container_name: db-suivi
+    environment:
+      POSTGRES_DB: suivi_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - diabete-network
+
+  db-notification:
+    image: postgres:15
+    container_name: db-notification
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - diabete-network
+
+  db-communication:
+    image: postgres:15
+    container_name: db-communication
+    environment:
+      POSTGRES_DB: communication_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - diabete-network
+
+  # ===== SERVICE CONFIG =====
+  service-config:
+    build: ../backend/service-config
+    container_name: service-config
+    ports:
+      - "8888:8888"
+    environment:
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+    networks:
+      - diabete-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===== SERVICE REGISTER =====
+  service-register:
+    build: ../backend/service-register
+    container_name: service-register
+    ports:
+      - "8761:8761"
+    depends_on:
+      service-config:
+        condition: service_healthy
+    networks:
+      - diabete-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ===== API GATEWAY =====
+  api-gateway:
+    build: ../backend/api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      service-register:
+        condition: service_healthy
+    networks:
+      - diabete-network
+
+  # ===== AUTH SERVICE =====
+  auth-service:
+    build: ../backend/Authentification-service
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      service-register:
+        condition: service_healthy
+      db-auth:
+        condition: service_started
+    networks:
+      - diabete-network
+
+  # ===== PATIENT SERVICE =====
+  patient-service:
+    build: ../backend/patient-service
+    container_name: patient-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      service-register:
+        condition: service_healthy
+      db-patient:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    networks:
+      - diabete-network
+
+  # ===== MEDECIN SERVICE =====
+  medecin-service:
+    build: ../backend/ProSante-service
+    container_name: medecin-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      service-register:
+        condition: service_healthy
+      db-medecin:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    networks:
+      - diabete-network
+
+  # ===== SUIVI MEDICAL SERVICE =====
+  suivi-medical-service:
+    build: ../backend/suivi-medical-service
+    container_name: suivi-medical-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      service-register:
+        condition: service_healthy
+      db-suivi:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    networks:
+      - diabete-network
+
+  # ===== NOTIFICATION SERVICE =====
+  notification-service:
+    build: ../backend/notification-service
+    container_name: notification-service
+    ports:
+      - "8090:8090"
+    depends_on:
+      service-register:
+        condition: service_healthy
+      db-notification:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    networks:
+      - diabete-network
+
+  # ===== COMMUNICATION SERVICE =====
+  communication-service:
+    build: ../backend/communication-service
+    container_name: communication-service
+    ports:
+      - "8086:8086"
+    depends_on:
+      service-register:
+        condition: service_healthy
+      db-communication:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    networks:
+      - diabete-network
+
+  # ===== FRONTEND =====
+  frontend:
+    build: ../frontend/diabete-react-frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - diabete-network
+
+networks:
+  diabete-network:
+    driver: bridge
