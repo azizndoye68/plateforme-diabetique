@@ -1,0 +1,36 @@
+# Java / Spring Boot
+**/target/
+**/*.jar
+**/*.war
+**/*.class
+**/.mvn/
+
+# Maven
+**/mvnw
+**/mvnw.cmd
+
+# Environment variables
+.env
+*.env
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Frontend
+**/node_modules/
+**/build/
+**/.env.local
+**/.env.production
+
+# Docker
+docker/logs/
+
+# OS
+.DS_Store
+Thumbs.db
