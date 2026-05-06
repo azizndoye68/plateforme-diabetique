@@ -1,0 +1,368 @@
+/* src/pages/patient/RattachementMedecin.css */
+
+.rattachement-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  padding: 2rem 0;
+}
+
+/* ===== CARD PRINCIPALE ===== */
+.rattachement-card {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== HEADER ===== */
+.rattachement-header {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.header-back-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+}
+
+.btn-back-dashboard {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.btn-back-dashboard:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateX(-5px);
+}
+
+.btn-back-dashboard:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.header-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2.5rem;
+  backdrop-filter: blur(10px);
+}
+
+.header-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.header-subtitle {
+  font-size: 1rem;
+  opacity: 0.95;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ===== ALERTS ===== */
+.custom-alert {
+  border-radius: 12px;
+  border: none;
+  padding: 1rem 1.25rem;
+  font-weight: 500;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  animation: fadeInDown 0.3s ease;
+}
+
+.custom-alert i {
+  font-size: 1.1rem;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== INFO PATIENT ===== */
+.patient-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.patient-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.patient-info h6 {
+  color: #2c3e50;
+  font-weight: 700;
+  margin: 0;
+}
+
+.patient-info small {
+  color: #6c757d;
+}
+
+/* ===== INSTRUCTIONS ===== */
+.instructions-box {
+  background: linear-gradient(135deg, #e3f2fd 0%, #e8eaf6 100%);
+  border-left: 4px solid #11998e;
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.instructions-title {
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0 0 1rem 0;
+}
+
+.instructions-list {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #495057;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.instructions-list li {
+  margin-bottom: 0.5rem;
+}
+
+.instructions-list strong {
+  color: #38ef7d;
+  font-family: 'Courier New', monospace;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* ===== FORMULAIRE ===== */
+.form-label-custom {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-label-custom i {
+  color: #38ef7d;
+}
+
+.code-input-wrapper {
+  position: relative;
+}
+
+.code-input-wrapper .input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  font-size: 1.25rem;
+  z-index: 2;
+}
+
+.code-input {
+  border: 2px solid #e4e7eb;
+  border-radius: 12px;
+  padding: 0.875rem 1rem 0.875rem 3rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  font-family: 'Courier New', monospace;
+}
+
+.code-input:focus {
+  border-color: #38ef7d;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  background: #fff;
+}
+
+.code-input::placeholder {
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* ===== BOUTON ===== */
+.btn-rattacher {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-rattacher:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.btn-rattacher:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ===== AIDE ===== */
+.help-section {
+  border-top: 1px solid #e9ecef;
+  padding-top: 1.5rem;
+}
+
+.help-card {
+  background: #f8f9fa;
+  border: none;
+  border-radius: 12px;
+}
+
+.help-title {
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0 0 0.75rem 0;
+}
+
+.help-text {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #495057;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 8px;
+}
+
+.contact-item i {
+  color: #38ef7d;
+  font-size: 1rem;
+}
+
+/* ===== FOOTER ===== */
+.rattachement-footer {
+  background: #f8f9fa;
+  padding: 1rem 2rem;
+  text-align: center;
+  border-top: 1px solid #e9ecef;
+}
+
+.rattachement-footer small {
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.rattachement-footer i {
+  color: #28a745;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .rattachement-container {
+    padding: 1rem;
+  }
+
+  .rattachement-header {
+    padding: 2rem 1.5rem;
+  }
+
+  .header-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+  }
+
+  .header-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .rattachement-card .card-body {
+    padding: 1.5rem !important;
+  }
+
+  .code-input {
+    font-size: 1rem;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+  }
+
+  .btn-rattacher {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+  }
+}

@@ -1,0 +1,373 @@
+/* CodeCouleur.css */
+
+/* Wrapper principal */
+.code-couleur-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  position: relative;
+}
+
+/* Contenu principal */
+.code-couleur-main-content {
+  margin-left: 272px;
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* En-tête moderne avec gradient */
+.code-couleur-header {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  padding: 0.75rem 3rem;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.code-couleur-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.welcome-section {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.greeting-text h1 {
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.greeting-text p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+}
+
+.time-display {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.action-header-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px);
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.action-header-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenu principal */
+.code-couleur-content {
+  padding: 2rem 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Carte d'information */
+.info-card {
+  border: none !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+  border-left: 5px solid #11998e !important;
+}
+
+.info-icon {
+  font-size: 3rem;
+  color: #11998e;
+}
+
+/* Carte de légende */
+.legend-card {
+  border: none !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.legend-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.legend-color {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.legend-hypo .legend-color {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+}
+
+.legend-normal .legend-color {
+  background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+}
+
+.legend-eleve .legend-color {
+  background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);
+}
+
+.legend-hyper .legend-color {
+  background: linear-gradient(135deg, #ff8787 0%, #ff6b6b 100%);
+}
+
+.legend-info strong {
+  display: block;
+  color: #2d3748;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.legend-info p {
+  color: #718096;
+  font-size: 0.85rem;
+}
+
+/* Sections de glycémie */
+.glycemie-sections {
+  margin-top: 1.5rem;
+}
+
+.section-card {
+  border: none !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.section-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.section-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.section-icon i {
+  font-size: 2rem;
+  color: white;
+}
+
+.section-text h5 {
+  color: #2d3748;
+  font-weight: 700;
+  margin: 0;
+}
+
+.section-text p {
+  margin: 0;
+}
+
+/* Carte de conseils */
+.tips-card {
+  border: none !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #ffffff 0%, #fff8e1 100%);
+  border-left: 5px solid #ffc107 !important;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.tip-item i {
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+/* Carte de chargement */
+.loading-card {
+  border: none !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .code-couleur-main-content {
+    margin-left: 0;
+  }
+
+  .code-couleur-header {
+    padding: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .welcome-section {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .time-display {
+    font-size: 1.5rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .action-header-btn {
+    flex: 1;
+  }
+
+  .code-couleur-content {
+    padding: 1.5rem;
+  }
+
+  .info-card .col-md-1,
+  .info-card .col-md-11 {
+    width: 100%;
+  }
+
+  .info-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .greeting-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .section-icon i {
+    font-size: 1.5rem;
+  }
+
+  .legend-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .tip-item {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .code-couleur-header {
+    padding: 1rem;
+  }
+
+  .code-couleur-content {
+    padding: 1rem;
+  }
+
+  .time-display {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .legend-color {
+    width: 40px;
+    height: 40px;
+  }
+
+  .legend-info strong {
+    font-size: 0.85rem;
+  }
+
+  .legend-info p {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .code-couleur-main-content {
+    margin-left: 72px;
+  }
+}

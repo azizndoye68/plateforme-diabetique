@@ -1,0 +1,651 @@
+/* src/pages/admin/ProfilAdmin.css */
+
+/* ================================ */
+/* WRAPPER & LAYOUT GLOBAL          */
+/* Mirrors em-wrapper / em-content  */
+/* ================================ */
+.pa-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.pa-content {
+  margin-left: 272px;
+  flex: 1;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.pa-page {
+  padding: 1.75rem 2rem 3rem;
+  max-width: 1280px;
+}
+
+/* ================================ */
+/* ANIMATION                        */
+/* ================================ */
+.pa-fade-in {
+  animation: pa-up 0.45s ease both;
+}
+
+@keyframes pa-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ================================ */
+/* LOADING                          */
+/* ================================ */
+.pa-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  gap: 0.75rem;
+}
+
+.pa-state--loading {
+  height: calc(100vh - 80px);
+  gap: 1rem;
+}
+
+.pa-state p {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.pa-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #f1f5f9;
+  border-top-color: #11998e;
+  border-radius: 50%;
+  animation: pa-spin 0.75s linear infinite;
+}
+
+@keyframes pa-spin { to { transform: rotate(360deg); } }
+
+/* ================================ */
+/* TOPBAR                           */
+/* ================================ */
+.pa-topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1.5px solid #e2e8f0;
+}
+
+.pa-topbar-eyebrow {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 500;
+  margin: 0 0 0.3rem 0;
+  display: flex;
+  align-items: center;
+  text-transform: capitalize;
+}
+
+.pa-topbar-title {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.pa-topbar-badge {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #38ef7d;
+  letter-spacing: 0.2px;
+}
+
+/* ================================ */
+/* ALERTES                          */
+/* ================================ */
+.pa-alert {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+}
+
+.pa-alert--success {
+  background: rgba(17, 153, 142, 0.08);
+  border: 1.5px solid rgba(17, 153, 142, 0.25);
+  color: #0d7a6b;
+}
+
+.pa-alert--error {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1.5px solid rgba(239, 68, 68, 0.25);
+  color: #dc2626;
+}
+
+/* ================================ */
+/* LAYOUT 2 COLONNES                */
+/* ================================ */
+.pa-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.pa-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ================================ */
+/* CARTES                           */
+/* ================================ */
+.pa-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06);
+  border: 1.5px solid #f1f5f9;
+  transition: box-shadow 0.25s ease;
+  overflow: hidden;
+}
+
+.pa-card:hover {
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.09);
+}
+
+.pa-card__head {
+  padding: 1.1rem 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pa-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.pa-card__icon-sm {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.pa-card__title {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.pa-card__body {
+  padding: 1.1rem 1.5rem 1.5rem;
+}
+
+.pa-card__actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 1.25rem;
+}
+
+/* ================================ */
+/* CARTE IDENTITÉ (colonne gauche)  */
+/* ================================ */
+.pa-card--identity {
+  border: 1.5px solid #f1f5f9;
+}
+
+.pa-identity-header {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  height: 110px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.pa-avatar-ring {
+  position: absolute;
+  bottom: -42px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38ef7d, #11998e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(56, 239, 125, 0.4);
+  z-index: 2;
+}
+
+.pa-avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: white;
+  color: #11998e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.pa-online-dot {
+  position: absolute;
+  bottom: -35px;
+  left: calc(50% + 26px);
+  width: 14px;
+  height: 14px;
+  background: #38ef7d;
+  border: 3px solid white;
+  border-radius: 50%;
+  z-index: 3;
+  box-shadow: 0 0 6px rgba(56, 239, 125, 0.6);
+}
+
+.pa-identity-body {
+  padding: 3.25rem 1.75rem 1.5rem;
+  text-align: center;
+}
+
+.pa-identity-name {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 1.2rem;
+  margin-bottom: 0.2rem;
+}
+
+.pa-identity-role {
+  color: #64748b;
+  font-size: 0.84rem;
+  margin-bottom: 0.875rem;
+}
+
+.pa-identity-badge {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #38ef7d, #11998e);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.875rem;
+  border-radius: 20px;
+  letter-spacing: 0.2px;
+}
+
+/* Info rows dans carte identité */
+.pa-info-list {
+  text-align: left;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 1.1rem;
+  margin-top: 1.1rem;
+}
+
+.pa-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.pa-info-row:last-child { border-bottom: none; }
+
+.pa-info-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(56, 239, 125, 0.1);
+  color: #38ef7d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.pa-info-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pa-info-value {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #1e293b;
+  word-break: break-all;
+}
+
+.pa-info-value--approved {
+  color: #0d7a6b;
+}
+
+/* Bloc readonly bas de carte identité */
+.pa-readonly-block {
+  background: #f8fafc;
+  border-top: 1.5px solid #f1f5f9;
+  padding: 1.1rem 1.75rem 1.5rem;
+}
+
+.pa-readonly-head {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #476954;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.pa-readonly-note {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin-bottom: 0.875rem;
+}
+
+.pa-readonly-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pa-readonly-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  background: rgba(56, 239, 125, 0.06);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+}
+
+.pa-readonly-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.pa-readonly-value {
+  color: #1e293b;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+/* ================================ */
+/* CHAMPS FORMULAIRE                */
+/* ================================ */
+.pa-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pa-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pa-input {
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  padding: 0.65rem 2.75rem 0.65rem 0.875rem !important;
+  font-size: 0.875rem !important;
+  color: #1e293b !important;
+  background: #f8fafc !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+  outline: none !important;
+}
+
+.pa-input:focus {
+  border-color: #38ef7d !important;
+  background: white !important;
+  box-shadow: 0 0 0 3px rgba(56, 239, 125, 0.1) !important;
+}
+
+.pa-input--error {
+  border-color: #ef4444 !important;
+}
+
+.pa-input--error:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.pa-input--success {
+  border-color: #10b981 !important;
+}
+
+.pa-input--success:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Valeur lecture seule */
+.pa-display-value {
+  display: flex;
+  align-items: center;
+  padding: 0.65rem 0.875rem;
+  background: #f8fafc;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  color: #475569;
+  font-weight: 500;
+  min-height: 42px;
+}
+
+/* Note info */
+.pa-info-note {
+  background: rgba(56, 239, 125, 0.06);
+  border: 1.5px solid rgba(56, 239, 125, 0.15);
+  border-radius: 10px;
+  padding: 0.6rem 0.875rem;
+  font-size: 0.79rem;
+  color: #38ef7d;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+/* ================================ */
+/* PASSWORD WRAPPER                 */
+/* ================================ */
+.pa-pwd-wrapper {
+  position: relative;
+}
+
+.pa-pwd-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.pa-pwd-toggle:hover { color: #38ef7d; }
+
+/* ================================ */
+/* FORCE DU MOT DE PASSE            */
+/* ================================ */
+.pa-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pa-strength__bar {
+  flex: 1;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.pa-strength__fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.4s ease, background 0.4s ease;
+}
+
+.pa-strength__label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ================================ */
+/* MESSAGES INLINE CHAMP            */
+/* ================================ */
+.pa-field-msg {
+  display: flex;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 500;
+  margin-top: 0.3rem;
+}
+
+.pa-field-msg--error   { color: #ef4444; }
+.pa-field-msg--success { color: #10b981; }
+
+/* ================================ */
+/* CONSEIL SÉCURITÉ                 */
+/* ================================ */
+.pa-security-tip {
+  background: linear-gradient(135deg, rgba(56, 239, 125, 0.06), rgba(17, 153, 142, 0.06));
+  border: 1.5px dashed rgba(56, 239, 125, 0.25);
+  border-radius: 10px;
+  padding: 0.65rem 0.875rem;
+  font-size: 0.79rem;
+  color: #38ef7d;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+/* ================================ */
+/* BOUTONS                          */
+/* ================================ */
+.pa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  white-space: nowrap;
+  font-family: inherit;
+  padding: 0.65rem 1.4rem;
+}
+
+.pa-btn--primary {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  color: white;
+  box-shadow: 0 4px 14px rgba(17, 153, 142, 0.3);
+}
+
+.pa-btn--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+}
+
+.pa-btn--primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pa-btn--ghost {
+  background: white;
+  color: #64748b;
+  border: 1.5px solid #e2e8f0;
+}
+
+.pa-btn--ghost:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+/* ================================ */
+/* RESPONSIVE                       */
+/* ================================ */
+@media (max-width: 1200px) {
+  .pa-layout { grid-template-columns: 290px 1fr; }
+}
+
+@media (max-width: 1050px) {
+  .pa-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 992px) {
+  .pa-content    { margin-left: 72px; }
+  .pa-page       { padding: 1.25rem 1rem 2rem; }
+  .pa-topbar     { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 768px) {
+  .pa-page         { padding: 1rem 0.875rem 2rem; }
+  .pa-card__actions { flex-direction: column; }
+  .pa-btn          { width: 100%; }
+  .pa-topbar-title { font-size: 1.35rem; }
+}
+
+@media (max-width: 480px) {
+  .pa-readonly-item { flex-direction: column; align-items: flex-start; }
+}

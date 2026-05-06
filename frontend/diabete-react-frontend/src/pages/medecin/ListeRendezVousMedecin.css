@@ -1,0 +1,446 @@
+/* src/pages/medecin/ListeRendezVousMedecin.css */
+
+.liste-rdv-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.liste-rdv-main-content {
+  padding-top: 0px;
+}
+
+.liste-rdv-main-content .container-fluid {
+  max-width: 1400px;
+  padding: 2rem;
+}
+
+/* ===== LOADING STATE ===== */
+.liste-rdv-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.liste-rdv-loading .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.liste-rdv-loading p {
+  color: #5e6c84;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* ===== HEADER ===== */
+.liste-rdv-header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.liste-rdv-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.liste-rdv-title i {
+  color: #38ef7d;
+}
+
+.liste-rdv-subtitle {
+  color: #5e6c84;
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+}
+
+/* ===== STAT CARDS ===== */
+.stat-card-rdv {
+  border: none;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.stat-card-rdv:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-rdv .card-body {
+  padding: 1.5rem;
+}
+
+.stat-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.stat-label {
+  color: #8492a6;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0 0;
+}
+
+/* ===== FILTER CARD ===== */
+.filter-card {
+  border: none;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.filter-card .card-body {
+  padding: 1.5rem;
+}
+
+.filter-label {
+  color: #5e6c84;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.filter-label i {
+  color: #38ef7d;
+}
+
+.filter-input {
+  border: 2px solid #e4e7eb;
+  border-radius: 10px;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  transition: all 0.3s ease;
+}
+
+.filter-input:focus {
+  border-color: #38ef7d;
+  box-shadow: 0 0 0 3px rgba(56, 239, 125, 0.1);
+}
+
+/* ===== TABLE CARD ===== */
+.rdv-table-card {
+  border: none;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.rdv-table-card .card-body {
+  padding: 2rem;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-title {
+  color: #2c3e50;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.table-title i {
+  color: #38ef7d;
+}
+
+/* ===== TABLE ===== */
+.rdv-table {
+  margin: 0;
+}
+
+.rdv-table thead {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.rdv-table thead th {
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 1rem;
+  border: none;
+  vertical-align: middle;
+}
+
+.rdv-table tbody tr {
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f0f3f7;
+}
+
+.rdv-table tbody tr:hover {
+  background: #f8f9fb;
+  transform: scale(1.01);
+}
+
+.rdv-table tbody tr.rdv-today {
+  background: linear-gradient(90deg, rgba(56, 239, 125, 0.05) 0%, transparent 100%);
+  border-left: 4px solid #38ef7d;
+}
+
+.rdv-table tbody td {
+  padding: 1.25rem 1rem;
+  vertical-align: middle;
+  color: #2c3e50;
+  font-size: 0.9375rem;
+}
+
+/* ===== DATE CELL ===== */
+.date-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.date-info {
+  display: flex;
+  align-items: center;
+  color: #2c3e50;
+  font-size: 0.9375rem;
+}
+
+.date-info i {
+  color: #38ef7d;
+}
+
+.time-info {
+  display: flex;
+  align-items: center;
+  color: #8492a6;
+  font-size: 0.875rem;
+}
+
+.time-info i {
+  color: #a0aec0;
+}
+
+/* ===== PATIENT CELL ===== */
+.patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.patient-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.patient-name {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.type-badge-small {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  font-weight: 500;
+}
+
+/* ===== MOTIF CELL ===== */
+.motif-cell {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #5e6c84;
+}
+
+/* ===== STATUT ===== */
+.statut-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.statut-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.btn-quick-action {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.btn-quick-action:hover {
+  transform: scale(1.1);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.action-buttons .btn {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: none;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.btn-view {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+}
+
+.btn-view:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(56, 239, 125, 0.4);
+  color: white;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(240, 147, 251, 0.4);
+  color: white;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  padding: 4rem 2rem !important;
+}
+
+.empty-state i {
+  display: block;
+  margin: 0 auto;
+}
+
+.empty-state p {
+  color: #5e6c84;
+  margin-top: 1rem;
+}
+
+.empty-state .text-muted {
+  color: #8492a6 !important;
+  font-size: 0.875rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .liste-rdv-main-content .container-fluid {
+    padding: 1rem;
+  }
+
+  .liste-rdv-title {
+    font-size: 1.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .rdv-table thead th {
+    font-size: 0.75rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .rdv-table tbody td {
+    padding: 1rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .patient-avatar {
+    width: 35px;
+    height: 35px;
+    font-size: 0.875rem;
+  }
+
+  .action-buttons .btn {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .liste-rdv-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .stat-card-rdv .card-body {
+    padding: 1rem;
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+
+  .filter-card .card-body {
+    padding: 1rem;
+  }
+}

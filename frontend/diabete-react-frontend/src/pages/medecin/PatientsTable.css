@@ -1,0 +1,364 @@
+/* PatientsTable.css */
+
+/* Carte principale */
+.patients-table-card {
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  background: white !important;
+}
+
+/* Barre d'actions */
+.table-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f3f5;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Switch de filtre */
+.filter-switch {
+  font-weight: 600;
+  color: #495057;
+}
+
+.filter-switch .form-check-input:checked {
+  background-color: #38ef7d;
+  border-color: #11998e;
+}
+
+/* Badge de compteur */
+.count-badge {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+/* Input de recherche */
+.search-input {
+  min-width: 250px;
+  border-radius: 10px !important;
+  border: 2px solid #e9ecef !important;
+  padding: 0.6rem 1rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.search-input:focus {
+  border-color: #38ef7d !important;
+  box-shadow: 0 0 0 0.2rem rgba(56, 239, 125, 0.15) !important;
+}
+
+/* Bouton ajouter patient */
+.btn-add-patient {
+  border-radius: 12px !important;
+  padding: 0.6rem 1.5rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3) !important;
+  transition: all 0.3s ease !important;
+  display: flex;
+  align-items: center;
+}
+
+.btn-add-patient:hover {
+  transform: translateY(-2px) !important;
+  background: linear-gradient(135deg, #0d7a6b 0%, #0a5c50 100%) !important;
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4) !important;
+}
+
+.btn-add-patient:focus,
+.btn-add-patient:active,
+.btn-add-patient:focus-visible {
+  background: linear-gradient(135deg, #0d7a6b 0%, #0a5c50 100%) !important;
+  box-shadow: 0 0 0 0.25rem rgba(17, 153, 142, 0.35) !important;
+  outline: none !important;
+}
+
+/* Cellule nom patient */
+.patient-name-cell {
+  display: flex;
+  align-items: center;
+}
+
+.patient-name-cell i {
+  font-size: 1.3rem;
+}
+
+/* Badges modernes */
+.badge-modern {
+  padding: 0.5rem 0.875rem;
+  font-weight: 600;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.badge-modern:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.glycemie-badge {
+  min-width: 100px;
+  justify-content: center;
+}
+
+/* Cellule de notifications */
+.notifications-cell {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.notif-icon-wrapper {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.notif-icon-wrapper:hover {
+  background: rgba(102, 126, 234, 0.1);
+  transform: scale(1.1);
+}
+
+.icon-active {
+  color: #dc3545;
+}
+
+.icon-active.icon-warning {
+  color: #ffc107;
+}
+
+.icon-active.icon-primary {
+  color: #38ef7d;
+}
+
+.icon-inactive {
+  color: #dee2e6;
+  opacity: 0.5;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  font-size: 10px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.notif-badge-warning {
+  color: #000 !important;
+}
+
+.notif-badge-primary {
+  background-color: #38ef7d !important;
+}
+
+/* Ligne étendue */
+.expanded-row-card {
+  border: none !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%) !important;
+  margin: 0.5rem 1rem !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.info-item i {
+  font-size: 1.1rem;
+}
+
+/* État vide */
+.no-data-state {
+  text-align: center;
+  padding: 3rem 1rem !important;
+}
+
+/* Modal de notifications */
+.notifications-modal .modal-content {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header-custom {
+  padding: 1.5rem 2rem;
+  border: none;
+  position: relative;
+}
+
+.modal-header-custom::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.modal-header-custom .btn-close {
+  filter: brightness(0) invert(1);
+}
+
+.modal-body-custom {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+/* Scrollbar personnalisée */
+.modal-body-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body-custom::-webkit-scrollbar-track {
+  background: #f1f3f5;
+  border-radius: 10px;
+}
+
+.modal-body-custom::-webkit-scrollbar-thumb {
+  background: #38ef7d;
+  border-radius: 10px;
+}
+
+.modal-body-custom::-webkit-scrollbar-thumb:hover {
+  background: #11998e;
+}
+
+/* Item de notification */
+.notification-item {
+  padding: 1.25rem !important;
+  border: none !important;
+  border-bottom: 1px solid #f1f3f5 !important;
+  transition: all 0.3s ease;
+}
+
+.notification-item:hover {
+  background: #f8f9ff !important;
+}
+
+.notification-item:last-child {
+  border-bottom: none !important;
+}
+
+.notification-message {
+  white-space: pre-wrap;
+  color: #495057;
+  line-height: 1.6;
+}
+
+/* État sans notifications */
+.no-notifications-state {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+/* Footer du modal */
+.modal-footer-custom {
+  padding: 1rem 2rem;
+  border-top: 1px solid #f1f3f5;
+  background: #f8f9fa;
+}
+
+.btn-close-modal {
+  border-radius: 12px !important;
+  padding: 0.6rem 2rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-close-modal:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4) !important;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .table-actions-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-input {
+    min-width: 100%;
+  }
+
+  .btn-add-patient {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .notifications-cell {
+    gap: 0.75rem;
+  }
+
+  .notif-icon-wrapper svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .badge-modern {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .glycemie-badge {
+    min-width: 85px;
+  }
+}
+
+@media (max-width: 576px) {
+  .patients-table-card .card-body {
+    padding: 1rem !important;
+  }
+
+  .table-actions-bar {
+    padding-bottom: 1rem;
+  }
+
+  .count-badge {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .expanded-row-card .row {
+    flex-direction: column;
+  }
+
+  .info-item {
+    font-size: 0.85rem;
+  }
+}

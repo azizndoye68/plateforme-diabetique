@@ -1,0 +1,591 @@
+/* src/pages/medecin/ProfilMedecin.css */
+
+/* ================================ */
+/* WRAPPER                          */
+/* ================================ */
+.profil-medecin-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0faf5 0%, #e8f5f0 100%);
+}
+
+.profil-medecin-content {
+  padding-top: 55px;
+  padding-bottom: 3rem;
+  min-height: 100vh;
+}
+
+/* ================================ */
+/* LOADING                          */
+/* ================================ */
+.profil-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 70px);
+  padding-top: 70px;
+  gap: 1rem;
+  color: #6c757d;
+}
+
+.profil-loading .spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: #11998e !important;
+}
+
+/* ================================ */
+/* ALERTES                          */
+/* ================================ */
+.profil-alert {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.profil-alert-success {
+  background: rgba(56, 239, 125, 0.12);
+  border: 1px solid rgba(17, 153, 142, 0.3);
+  color: #0d7a6b;
+}
+
+.profil-alert-error {
+  background: rgba(220, 53, 69, 0.08);
+  border: 1px solid rgba(220, 53, 69, 0.25);
+  color: #dc3545;
+}
+
+/* ================================ */
+/* CARTE IDENTITÉ (gauche)          */
+/* ================================ */
+.profil-identity-card {
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden;
+  position: relative;
+}
+
+.profil-identity-header {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  height: 120px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0;
+  position: relative;
+}
+
+.profil-avatar-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: white;
+  color: #11998e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  border: 4px solid white;
+  box-shadow: 0 8px 25px rgba(17, 153, 142, 0.3);
+  position: absolute;
+  bottom: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.profil-identity-online {
+  position: absolute;
+  bottom: -38px;
+  left: calc(50% + 28px);
+  width: 16px;
+  height: 16px;
+  background: #38ef7d;
+  border: 3px solid white;
+  border-radius: 50%;
+  z-index: 3;
+  box-shadow: 0 0 8px rgba(56, 239, 125, 0.6);
+}
+
+.profil-identity-body {
+  padding: 3.5rem 2rem 2rem !important;
+  text-align: center;
+}
+
+.profil-fullname {
+  font-weight: 800;
+  color: #212529;
+  font-size: 1.3rem;
+  margin-bottom: 0.25rem;
+}
+
+.profil-specialite {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.profil-status-badge {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  color: white !important;
+  font-size: 0.78rem;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* Infos fixes dans la carte identité */
+.profil-fixed-info {
+  text-align: left;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 1.25rem;
+}
+
+.profil-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.profil-info-row:last-child {
+  border-bottom: none;
+}
+
+.profil-info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(56, 239, 125, 0.15) 0%, rgba(17, 153, 142, 0.15) 100%);
+  color: #11998e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.profil-info-label {
+  display: block;
+  font-size: 0.72rem;
+  color: #adb5bd;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profil-info-value {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* ================================ */
+/* CARTE READONLY                   */
+/* ================================ */
+.profil-readonly-card {
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+  background: linear-gradient(135deg, #fff9f0 0%, #fff5e8 100%) !important;
+  border-left: 4px solid #ffc107 !important;
+}
+
+.profil-readonly-note {
+  font-size: 0.82rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.profil-readonly-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profil-readonly-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 193, 7, 0.08);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.profil-readonly-label {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.profil-readonly-value {
+  color: #212529;
+  font-weight: 600;
+}
+
+/* ================================ */
+/* EN-TÊTE FORMULAIRE               */
+/* ================================ */
+.profil-form-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.profil-form-title {
+  font-weight: 800;
+  color: #212529;
+  margin-bottom: 0.25rem;
+  font-size: 1.3rem;
+}
+
+.profil-form-subtitle {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ================================ */
+/* MOT DE PASSE                     */
+/* ================================ */
+.profil-pwd-card {
+  border-left-color: #11998e !important;
+}
+
+/* Input avec padding pour le bouton œil */
+.profil-input-pwd {
+  padding-right: 2.8rem !important;
+}
+
+/* Variants de validation */
+.profil-input-pwd-error {
+  border-color: #dc3545 !important;
+}
+
+.profil-input-pwd-error:focus {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15) !important;
+}
+
+.profil-input-pwd-success {
+  border-color: #20c997 !important;
+}
+
+.profil-input-pwd-success:focus {
+  border-color: #20c997 !important;
+  box-shadow: 0 0 0 0.2rem rgba(32, 201, 151, 0.15) !important;
+}
+
+/* Wrapper position relative pour le toggle */
+.profil-pwd-wrapper {
+  position: relative;
+}
+
+.profil-pwd-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #adb5bd;
+  cursor: pointer;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.profil-pwd-toggle:hover {
+  color: #11998e;
+}
+
+/* Indicateur de force */
+.profil-pwd-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.profil-pwd-strength-bar {
+  flex: 1;
+  height: 5px;
+  background: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.profil-pwd-strength-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.4s ease, background 0.4s ease;
+}
+
+.profil-pwd-strength-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Messages inline champ */
+.profil-pwd-field-msg {
+  display: flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-top: 0.3rem;
+}
+
+.profil-pwd-field-msg--error   { color: #dc3545; }
+.profil-pwd-field-msg--success { color: #20c997; }
+
+/* Conseil sécurité */
+.profil-security-tip {
+  background: linear-gradient(135deg, rgba(17, 153, 142, 0.06), rgba(56, 239, 125, 0.06));
+  border: 1.5px dashed rgba(17, 153, 142, 0.25);
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-size: 0.82rem;
+  color: #11998e;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+
+/* ================================ */
+/* BOUTONS                          */
+/* ================================ */
+.btn-edit-profil {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.65rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.25);
+}
+
+.btn-edit-profil:hover {
+  background: linear-gradient(135deg, #0d7a6b 0%, #0a5c50 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.35);
+}
+
+.btn-save-profil {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0.65rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.25);
+}
+
+.btn-save-profil:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0d7a6b 0%, #0a5c50 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.35);
+}
+
+.btn-save-profil:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-cancel-profil {
+  background: white !important;
+  border: 2px solid #dee2e6 !important;
+  color: #6c757d !important;
+  padding: 0.65rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel-profil:hover {
+  border-color: #adb5bd !important;
+  color: #495057 !important;
+  background: #f8f9fa !important;
+}
+
+/* ================================ */
+/* CARTES FORMULAIRE                */
+/* ================================ */
+.profil-form-card {
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  background: white !important;
+  transition: box-shadow 0.3s ease;
+  border-left: 5px solid #11998e !important;
+}
+
+.profil-form-card:hover {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ================================ */
+/* TITRES DE SECTION                */
+/* ================================ */
+.profil-section-title {
+  font-weight: 700;
+  color: #11998e;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+
+/* ================================ */
+/* LABELS ET INPUTS                 */
+/* ================================ */
+.profil-label {
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.4rem;
+}
+
+.profil-input {
+  border: 2px solid #e9ecef !important;
+  border-radius: 10px !important;
+  padding: 0.7rem 1rem !important;
+  font-size: 0.9rem !important;
+  transition: all 0.3s ease !important;
+  background: #fafafa !important;
+  color: #212529 !important;
+}
+
+.profil-input:focus {
+  border-color: #11998e !important;
+  box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.15) !important;
+  background: white !important;
+  outline: none !important;
+}
+
+/* Valeur affichée (mode lecture) */
+.profil-display-value {
+  padding: 0.7rem 1rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  color: #212529;
+  font-weight: 500;
+  border: 2px solid transparent;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* ================================ */
+/* ACTIONS BAS DE FORMULAIRE        */
+/* ================================ */
+.profil-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  border-top: 1px solid #f1f3f5;
+  padding-top: 1.25rem;
+}
+
+/* ================================ */
+/* RESPONSIVE                       */
+/* ================================ */
+@media (max-width: 992px) {
+  .profil-medecin-content {
+    padding-top: 80px;
+    padding-bottom: 2rem;
+  }
+
+  .profil-medecin-content .px-4 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  .profil-form-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .profil-medecin-content {
+    padding-top: 75px;
+  }
+
+  .profil-medecin-content .px-4 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .profil-form-actions {
+    flex-direction: column;
+  }
+
+  .btn-save-profil,
+  .btn-cancel-profil,
+  .btn-edit-profil {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .profil-identity-body {
+    padding: 3.5rem 1.5rem 1.5rem !important;
+  }
+
+  .profil-readonly-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .profil-fullname {
+    font-size: 1.1rem;
+  }
+
+  .profil-form-title {
+    font-size: 1.1rem;
+  }
+
+  .profil-form-card .card-body {
+    padding: 1.25rem !important;
+  }
+}

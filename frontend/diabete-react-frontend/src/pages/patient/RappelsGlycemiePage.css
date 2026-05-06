@@ -1,0 +1,391 @@
+/* src/pages/RappelsGlycemiePage.css */
+
+.rappels-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  display: flex;
+}
+
+.rappels-content {
+  margin-left: 272px;
+  flex: 1;
+  padding-bottom: 3rem;
+}
+
+/* ── Header ─────────────────────────────────────── */
+.rappels-header {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(17, 153, 142, 0.2);
+}
+
+.rappels-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rappels-back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.rappels-back-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.rappels-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.rappels-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+/* ── Body ───────────────────────────────────────── */
+.rappels-body {
+  padding: 2rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* ── Loading ────────────────────────────────────── */
+.rappels-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  gap: 1rem;
+  color: #9ca3af;
+}
+
+.rappels-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #11998e;
+  border-radius: 50%;
+  animation: rappels-spin 0.8s linear infinite;
+}
+
+@keyframes rappels-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Info banner ────────────────────────────────── */
+.rappels-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #1e40af;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.rappels-info-banner i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rappels-info-banner p { margin: 0; }
+
+/* ── Cards rappels ──────────────────────────────── */
+.rappels-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.rappel-card {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #f0f0f0;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s ease;
+}
+
+.rappel-card--active {
+  border-color: #11998e;
+  box-shadow: 0 4px 20px rgba(17, 153, 142, 0.12);
+}
+
+.rappel-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rappel-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.rappel-info { flex: 1; }
+
+.rappel-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 2px;
+}
+
+.rappel-desc {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* ── Toggle switch ──────────────────────────────── */
+.rappel-toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.rappel-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.rappel-toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: #e5e7eb;
+  border-radius: 26px;
+  transition: background 0.25s;
+}
+
+.rappel-toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.25s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.rappel-toggle input:checked + .rappel-toggle-slider {
+  background: #11998e;
+}
+
+.rappel-toggle input:checked + .rappel-toggle-slider::before {
+  transform: translateX(24px);
+}
+
+/* ── Time section ───────────────────────────────── */
+.rappel-time-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  animation: rappels-fade-in 0.2s ease;
+}
+
+@keyframes rappels-fade-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.rappel-time-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.rappel-time-input {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  outline: none;
+  transition: border-color 0.2s;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.rappel-time-input:focus {
+  border-color: #11998e;
+  background: white;
+}
+
+.rappel-time-preview {
+  font-size: 0.8rem;
+  color: #11998e;
+  margin: 0.5rem 0 0;
+  font-style: italic;
+}
+
+/* ── Canaux ─────────────────────────────────────── */
+.rappels-canaux {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid #f0f0f0;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+}
+
+.rappels-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 1rem;
+}
+
+.canal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.canal-item:last-child { border-bottom: none; }
+
+.canal-info {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.canal-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.canal-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 2px;
+}
+
+.canal-desc {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+/* ── Alerts ─────────────────────────────────────── */
+.rappels-alert {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.rappels-alert--error {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.rappels-alert--success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+/* ── Bouton save ────────────────────────────────── */
+.rappels-save-btn {
+  width: 100%;
+  padding: 0.875rem;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.35);
+}
+
+.rappels-save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.45);
+}
+
+.rappels-save-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.rappels-btn-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: rappels-spin 0.8s linear infinite;
+}
+
+/* ── Responsive ─────────────────────────────────── */
+@media (max-width: 992px) {
+  .rappels-content { margin-left: 72px; }
+  .rappels-body { padding: 1.25rem; }
+  .rappels-header { padding: 1rem 1.25rem; }
+}
+
+@media (max-width: 576px) {
+  .rappels-content { margin-left: 0; }
+  .rappel-card-header { flex-wrap: wrap; }
+}

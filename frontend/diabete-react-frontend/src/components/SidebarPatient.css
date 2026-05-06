@@ -1,0 +1,357 @@
+/* src/components/SidebarPatient.css */
+
+:root {
+  --sp-width:        272px;
+  --sp-width-mini:   72px;
+  --sp-bg-from:      #11998e;
+  --sp-bg-to:        #38ef7d;
+  --sp-accent:       #ffc107;
+  --sp-white:        #ffffff;
+  --sp-white-10:     rgba(255, 255, 255, 0.10);
+  --sp-white-15:     rgba(255, 255, 255, 0.15);
+  --sp-white-20:     rgba(255, 255, 255, 0.20);
+  --sp-white-75:     rgba(255, 255, 255, 0.75);
+  --sp-radius:       12px;
+  --sp-duration:     260ms;
+  --sp-ease:         cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Base ─────────────────────────────────────────── */
+.sp-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sp-width);
+  background: linear-gradient(180deg, var(--sp-bg-from) 0%, var(--sp-bg-to) 100%);
+  color: var(--sp-white);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+  transition: width var(--sp-duration) var(--sp-ease);
+  overflow: hidden;
+}
+
+.sp-sidebar.sp-collapsed {
+  width: var(--sp-width-mini);
+}
+
+/* ── Logo ─────────────────────────────────────────── */
+.sp-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 16px;
+  border-bottom: 1px solid var(--sp-white-10);
+  cursor: pointer;
+  transition: background var(--sp-duration) var(--sp-ease);
+  flex-shrink: 0;
+  min-height: 72px;
+}
+
+.sp-logo:hover { background: var(--sp-white-10); }
+
+.sp-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--sp-white-20);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.sp-logo-text {
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sp-logo-accent { color: var(--sp-accent); }
+
+/* ── Toggle ───────────────────────────────────────── */
+.sp-toggle {
+  position: absolute;
+  top: 22px;
+  right: -14px;
+  width: 28px;
+  height: 28px;
+  background: var(--sp-white);
+  border: 2px solid #e2e8f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--sp-bg-from);
+  font-size: 11px;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: all var(--sp-duration) var(--sp-ease);
+}
+
+.sp-toggle:hover {
+  background: var(--sp-accent);
+  color: white;
+  border-color: var(--sp-accent);
+  transform: scale(1.1);
+}
+
+/* ── Profil ───────────────────────────────────────── */
+.sp-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 10px;
+  padding: 12px;
+  background: var(--sp-white-10);
+  border-radius: var(--sp-radius);
+  border: 1px solid var(--sp-white-20);
+  cursor: pointer;
+  transition: all var(--sp-duration) var(--sp-ease);
+  flex-shrink: 0;
+  overflow: hidden;
+  min-height: 64px;
+}
+
+.sp-profile:hover {
+  background: var(--sp-white-15);
+  transform: translateY(-1px);
+}
+
+.sp-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sp-avatar {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--sp-white-20);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  object-fit: cover;
+}
+
+.sp-status-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 11px;
+  height: 11px;
+  background: var(--sp-accent);
+  border: 2px solid var(--sp-bg-from);
+  border-radius: 50%;
+  animation: sp-pulse 2s infinite;
+}
+
+@keyframes sp-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.5); }
+  50%       { box-shadow: 0 0 0 5px rgba(255, 193, 7, 0); }
+}
+
+.sp-profile-info {
+  overflow: hidden;
+  min-width: 0;
+}
+
+.sp-profile-name {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sp-profile-role {
+  font-size: 11px;
+  color: var(--sp-white-75);
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+/* ── Navigation ───────────────────────────────────── */
+.sp-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 10px;
+}
+
+.sp-nav::-webkit-scrollbar { width: 4px; }
+.sp-nav::-webkit-scrollbar-track { background: transparent; }
+.sp-nav::-webkit-scrollbar-thumb {
+  background: var(--sp-white-20);
+  border-radius: 4px;
+}
+
+.sp-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ── Item ─────────────────────────────────────────── */
+.sp-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--sp-radius);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--sp-white-75);
+  transition: all var(--sp-duration) var(--sp-ease);
+  position: relative;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.sp-item:hover {
+  background: var(--sp-white-15);
+  color: var(--sp-white);
+  transform: translateX(4px);
+}
+
+.sp-item--active {
+  background: var(--sp-white-20);
+  color: var(--sp-white);
+  border-left: 3px solid var(--sp-accent);
+  padding-left: 11px;
+}
+
+.sp-item--active .sp-icon {
+  color: var(--sp-accent);
+}
+
+.sp-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  min-width: 20px;
+  text-align: center;
+  transition: transform var(--sp-duration) var(--sp-ease);
+}
+
+.sp-item:hover .sp-icon {
+  transform: scale(1.15);
+}
+
+.sp-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Tooltip (mode collapsed) ─────────────────────── */
+.sp-tooltip {
+  position: absolute;
+  left: calc(var(--sp-width-mini) - 2px);
+  background: #1e293b;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: all 180ms var(--sp-ease);
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.sp-tooltip::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #1e293b;
+  border-left: 0;
+}
+
+.sp-collapsed .sp-item:hover .sp-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Cacher le label et tooltip en mode normal */
+.sp-sidebar:not(.sp-collapsed) .sp-tooltip {
+  display: none;
+}
+
+/* ── Divider ──────────────────────────────────────── */
+.sp-divider {
+  height: 1px;
+  background: var(--sp-white-15);
+  margin: 10px 4px;
+}
+
+/* ── Footer ───────────────────────────────────────── */
+.sp-footer {
+  padding: 8px 10px;
+  border-top: 1px solid var(--sp-white-10);
+  background: rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sp-item--logout:hover {
+  background: rgba(255, 193, 7, 0.15);
+  color: var(--sp-accent);
+}
+
+.sp-item--logout:hover .sp-icon {
+  color: var(--sp-accent);
+}
+
+/* ── Mode collapsed — centrer les icônes ─────────── */
+.sp-collapsed .sp-item {
+  justify-content: center;
+  padding: 13px;
+  gap: 0;
+}
+
+.sp-collapsed .sp-item--active {
+  border-left: none;
+  border-bottom: 3px solid var(--sp-accent);
+  padding: 10px 13px;
+}
+
+.sp-collapsed .sp-profile {
+  justify-content: center;
+  padding: 10px;
+}
+
+.sp-collapsed .sp-logo {
+  justify-content: center;
+  padding: 18px 10px;
+}
+
+/* ── Animation entrée ─────────────────────────────── */
+@keyframes sp-slide-in {
+  from { transform: translateX(-100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.sp-sidebar { animation: sp-slide-in 0.35s var(--sp-ease); }
+
+/* ── Ajustement du contenu principal ─────────────── */
+/* À mettre dans le composant parent ou App.css */
+/*
+.cp-main, .chat-main-med, etc. :
+  margin-left: var(--sp-width) → 272px normal
+  margin-left: var(--sp-width-mini) → 72px collapsed
+*/

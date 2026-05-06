@@ -1,0 +1,476 @@
+/* src/pages/DashboardPatient.css */
+
+/* Wrapper principal */
+.dashboard-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  position: relative;
+}
+
+/* Contenu principal du dashboard */
+.dashboard-main-content {
+  margin-left: 272px;
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* En-tête moderne avec gradient */
+.dashboard-header {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  padding: 0.75rem 3rem;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.welcome-section {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.greeting-text h1 {
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-size: 1.3rem !important;
+}
+
+.greeting-text p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+}
+
+.time-display {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 1.2rem;
+  border-radius: 12px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.notification-btn {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.notification-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #dc3545;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border: 2px solid #11998e;
+}
+
+/* Zone de contenu */
+.dashboard-content {
+  padding: 0.75rem 1.5rem;
+  max-width: 1800px;
+}
+
+/* Réduire l'espacement entre les rows */
+.dashboard-content .g-4 {
+  --bs-gutter-y: 0.6rem !important;
+  --bs-gutter-x: 0.6rem !important;
+}
+
+.dashboard-content .mb-4 {
+  margin-bottom: 0.6rem !important;
+}
+
+/* Réduire le padding interne de tous les Card.Body */
+.dashboard-content .card-body {
+  padding: 0.85rem 1rem !important;
+}
+
+/* Cartes statistiques */
+.stat-card {
+  border: none !important;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+  background: white;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-primary {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border-left: 5px solid #11998e !important;
+}
+
+/* Icônes de statistiques */
+.stat-icon {
+  font-size: 1.8rem;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Valeur de glycémie */
+.glycemie-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.value-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.value-unit {
+  font-size: 1rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+/* Détails de la glycémie */
+.glycemie-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+  color: #495057;
+  font-size: 0.85rem;
+}
+
+.detail-item i {
+  color: #38ef7d;
+  font-size: 1.1rem;
+}
+
+/* Mini cartes */
+.stat-card-mini {
+  border: none !important;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.stat-card-mini:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.mini-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.mini-icon.bg-purple {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.mini-icon.bg-info {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.mini-icon.bg-warning {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+/* Conteneur de graphique */
+.chart-container {
+  min-height: 180px;
+  padding: 0.5rem 0;
+}
+
+/* État vide */
+.no-data-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem 1rem;
+  text-align: center;
+}
+
+.no-data-state i {
+  opacity: 0.3;
+}
+
+/* =============================================
+   BOUTONS - Surcharge Bootstrap pour vert foncé
+   ============================================= */
+
+/* Bouton d'action principal */
+.btn-action {
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none !important;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  background-color: #11998e !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.35) !important;
+}
+
+.btn-action:hover,
+.btn-action:focus,
+.btn-action:active {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+  background-color: #0d8a80 !important;
+  border-color: transparent !important;
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.45) !important;
+  color: white !important;
+}
+
+/* Surcharge complète de btn-primary Bootstrap */
+.dashboard-wrapper .btn-primary,
+.dashboard-wrapper .btn.btn-primary {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  background-color: #11998e !important;
+  border-color: #11998e !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3) !important;
+}
+
+.dashboard-wrapper .btn-primary:hover,
+.dashboard-wrapper .btn.btn-primary:hover {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+  background-color: #0d8a80 !important;
+  border-color: #0d8a80 !important;
+  color: white !important;
+}
+
+.dashboard-wrapper .btn-primary:focus,
+.dashboard-wrapper .btn.btn-primary:focus,
+.dashboard-wrapper .btn-primary:active,
+.dashboard-wrapper .btn.btn-primary:active {
+  background: linear-gradient(135deg, #11998e 0%, #0d8a80 100%) !important;
+  background-color: #0d8a80 !important;
+  border-color: #0d8a80 !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.25rem rgba(17, 153, 142, 0.5) !important;
+}
+
+/* Cartes d'action rapide */
+.action-card {
+  border: none !important;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: white;
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.action-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  margin: 0 auto;
+}
+
+.action-icon.bg-purple {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.action-icon.bg-primary {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.action-icon.bg-info {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+/* Badges personnalisés */
+.badge {
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+/* Progress bar personnalisée */
+.progress {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Forcer la suppression de toutes les bordures vertes Bootstrap */
+.card {
+  border: 2px solid #11998e !important;
+}
+
+.card.stat-card-primary {
+  border-left: 5px solid #11998e !important;
+}
+
+/* Fix dropdown notification visible au-dessus du header */
+.dashboard-header {
+  overflow: visible !important;
+}
+
+.header-content {
+  overflow: visible !important;
+}
+
+.header-actions {
+  overflow: visible !important;
+  position: relative;
+  z-index: 9999;
+}
+
+.dashboard-main-content {
+  overflow: visible !important;
+}
+
+.dashboard-wrapper {
+  overflow: visible !important;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .dashboard-main-content {
+    margin-left: 0;
+  }
+
+  .dashboard-header {
+    padding: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .welcome-section {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .time-display {
+    font-size: 1.5rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .dashboard-content {
+    padding: 1.5rem;
+  }
+
+  .value-number {
+    font-size: 3rem;
+  }
+
+  .value-unit {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .greeting-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .value-number {
+    font-size: 2.5rem;
+  }
+
+  .stat-card-mini .mini-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .action-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Ajouter : */
+@media (max-width: 992px) {
+  .dashboard-main-content {
+    margin-left: 72px; /* collapsed */
+  }
+}
