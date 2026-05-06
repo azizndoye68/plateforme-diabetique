@@ -1,0 +1,411 @@
+/* src/components/TopbarMedecin.css */
+
+/* ==================== */
+/* TOPBAR PRINCIPALE */
+/* ==================== */
+.topbar-medecin {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  box-shadow: 0 4px 20px rgba(17, 153, 142, 0.25);
+  padding: 0.5rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.topbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* ==================== */
+/* LOGO ET BRAND */
+/* ==================== */
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 2rem;
+}
+
+.topbar-brand:hover {
+  transform: translateY(-2px);
+}
+
+.logo-wrapper {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 6px;
+  border-radius: 10px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.topbar-brand:hover .logo-wrapper {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(5deg);
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand-highlight {
+  color: #ffc107;
+}
+
+/* ==================== */
+/* NAVIGATION */
+/* ==================== */
+.topbar-nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.topbar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.topbar-nav-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white !important;
+  transform: translateY(-2px);
+}
+
+.topbar-nav-link.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.nav-icon {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.nav-label {
+  font-size: 0.95rem;
+}
+
+.nav-badge {
+  background: #dc3545;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+  margin-left: 0.25rem;
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* ==================== */
+/* ACTIONS (notifications + profil) */
+/* ==================== */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: 1rem;
+}
+
+/* Notifications */
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-btn {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.notification-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.notification-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background: #dc3545;
+  border-radius: 50%;
+  border: 2px solid #11998e;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(220, 53, 69, 0);
+  }
+}
+
+/* ==================== */
+/* PROFIL DROPDOWN */
+/* ==================== */
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-toggle {
+  cursor: pointer;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.profile-info:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.profile-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.profile-name {
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.profile-role {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.75rem;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+}
+
+.profile-avatar {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  background: #28a745;
+  border: 3px solid #11998e;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+}
+
+/* ==================== */
+/* DROPDOWN MENU */
+/* ==================== */
+.profile-menu {
+  min-width: 280px;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.profile-menu-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.profile-menu-item:hover {
+  background: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.profile-menu-item:active {
+  transform: translateX(3px);
+}
+
+.menu-icon {
+  font-size: 1rem;
+  color: #11998e;
+  width: 20px;
+}
+
+.logout-item {
+  color: #dc3545;
+}
+
+.logout-item:hover {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.logout-item .menu-icon {
+  color: #dc3545;
+}
+
+/* ==================== */
+/* BOUTON HAMBURGER */
+/* ==================== */
+.topbar-toggle {
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.topbar-toggle:focus {
+  box-shadow: none;
+}
+
+.topbar-toggle .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ==================== */
+/* RESPONSIVE */
+/* ==================== */
+@media (max-width: 992px) {
+  .topbar-container {
+    padding: 0 1rem;
+  }
+
+  .topbar-nav {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem 0;
+    gap: 0.5rem;
+  }
+
+  .topbar-nav-link {
+    justify-content: flex-start;
+  }
+
+  .topbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-left: 0;
+    padding: 1rem 0;
+  }
+
+  .profile-info {
+    justify-content: space-between;
+  }
+
+  .profile-text {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+  }
+
+  .notification-wrapper {
+    width: 100%;
+  }
+
+  .notification-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .topbar-container {
+    padding: 0 0.5rem;
+  }
+
+  .brand-name {
+    font-size: 0.9rem;
+  }
+
+  .logo-wrapper {
+    padding: 4px;
+  }
+
+  .logo-wrapper img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .profile-name {
+    font-size: 0.85rem;
+  }
+
+  .nav-label {
+    font-size: 0.9rem;
+  }
+}

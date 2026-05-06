@@ -1,0 +1,286 @@
+/* ColorRange.css */
+
+.color-range-modern {
+  margin-bottom: 2rem;
+}
+
+/* Container de la barre colorée */
+.color-bar-container {
+  margin-bottom: 2rem;
+}
+
+/* Barre colorée principale */
+.color-bar {
+  display: flex;
+  height: 40px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Segments de couleur */
+.color-segment {
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.color-segment:not(:last-child) {
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.color-segment:hover {
+  transform: scaleY(1.1);
+  z-index: 10;
+  filter: brightness(1.1);
+}
+
+.color-segment.active {
+  transform: scaleY(1.15);
+  z-index: 10;
+  filter: brightness(1.15);
+}
+
+/* Animation de pulse pour le segment actif */
+.segment-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.3);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Indicateurs de valeurs */
+.value-indicators {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.5rem;
+}
+
+.value-indicator {
+  flex: 1;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.value-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6c757d;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  background: transparent;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.value-indicator.highlight .value-text {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 2px 10px rgba(56, 239, 125, 0.3);
+}
+
+/* Grille des cartes d'information */
+.zones-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Carte d'information de zone */
+.zone-info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.zone-info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.zone-info-card.active {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(102, 126, 234, 0.25);
+  border-color: #38ef7d;
+}
+
+/* En-tête de la carte */
+.zone-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.zone-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.zone-icon i {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.zone-title h6 {
+  margin: 0;
+  font-weight: 700;
+  color: #2d3748;
+  font-size: 1rem;
+}
+
+.zone-value {
+  display: block;
+  font-size: 0.85rem;
+  color: #718096;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+/* Corps de la carte */
+.zone-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.zone-description {
+  display: flex;
+  align-items: flex-start;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.zone-description i {
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.zone-action {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.75rem;
+  background: rgba(255, 193, 7, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #ffc107;
+}
+
+.zone-action i {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.zone-action small {
+  color: #495057;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Tooltip personnalisé */
+.custom-tooltip {
+  font-size: 0.9rem;
+}
+
+.custom-tooltip .tooltip-inner {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-tooltip .tooltip-arrow::before {
+  border-top-color: #38ef7d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .color-bar {
+    height: 35px;
+    border-radius: 16px;
+  }
+
+  .value-text {
+    font-size: 0.75rem;
+  }
+
+  .zones-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zone-icon {
+    width: 45px;
+    height: 45px;
+  }
+
+  .zone-icon i {
+    font-size: 1.3rem;
+  }
+
+  .zone-title h6 {
+    font-size: 0.95rem;
+  }
+
+  .zone-value {
+    font-size: 0.8rem;
+  }
+
+  .zone-description {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .color-bar {
+    height: 30px;
+    border-radius: 12px;
+  }
+
+  .value-indicators {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .value-indicator {
+    flex-basis: 48%;
+  }
+
+  .zone-info-card {
+    padding: 1rem;
+  }
+
+  .zone-card-header {
+    gap: 0.75rem;
+  }
+}

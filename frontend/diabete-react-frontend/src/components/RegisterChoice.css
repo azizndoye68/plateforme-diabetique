@@ -1,0 +1,422 @@
+/* src/components/RegisterChoice.css */
+
+/* ==================== */
+/* TOP BAR              */
+/* ==================== */
+.rc-topbar {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  padding: 0.5rem 0;
+  font-size: 0.85rem;
+}
+
+.rc-topbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.rc-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.rc-divider {
+  opacity: 0.4;
+}
+
+/* ==================== */
+/* NAVBAR               */
+/* ==================== */
+.rc-navbar {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 0.6rem 0;
+}
+
+.rc-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.rc-highlight {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rc-btn-primary {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.rc-btn-outline {
+  background: transparent;
+  color: #38ef7d;
+  border: 2px solid #38ef7d;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.rc-btn-outline:hover {
+  background: #38ef7d;
+  color: white;
+}
+
+/* ==================== */
+/* PAGE PRINCIPALE      */
+/* ==================== */
+.rc-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f7fa;
+}
+
+.rc-content {
+  flex: 1;
+  padding: 1.2rem 1rem 2.5rem;
+}
+
+/* ==================== */
+/* EN-TÊTE              */
+/* ==================== */
+.rc-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.rc-badge {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rc-header h1 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 800;
+  color: #2c3e50;
+  margin: 0.4rem 0 0.6rem;
+}
+
+.rc-sub {
+  color: #5a6c7d;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.rc-login-text {
+  color: #5a6c7d;
+  font-size: 0.9rem;
+}
+
+.rc-login-link {
+  background: none;
+  border: none;
+  color: #38ef7d;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.3s ease;
+}
+
+.rc-login-link:hover {
+  color: #11998e;
+  text-decoration: underline;
+}
+
+/* ==================== */
+/* CARTES DE CHOIX      */
+/* ==================== */
+.rc-cards {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.rc-card {
+  width: 300px;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  background: white;
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.rc-card:hover {
+  transform: translateY(-6px);
+}
+
+.rc-card--patient {
+  border-color: #38ef7d;
+}
+
+.rc-card--patient:hover {
+  box-shadow: 0 10px 30px rgba(56, 239, 125, 0.25);
+}
+
+.rc-card--medecin {
+  border-color: #ffc107;
+}
+
+.rc-card--medecin:hover {
+  box-shadow: 0 10px 30px rgba(255, 193, 7, 0.25);
+}
+
+/* En-tête de carte */
+.rc-card-head {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.rc-card-head--patient {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.rc-card-head--medecin {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.rc-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.8rem;
+  transition: transform 0.3s ease;
+}
+
+.rc-card:hover .rc-icon {
+  transform: scale(1.08) rotate(4deg);
+}
+
+/* Corps de carte */
+.rc-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.rc-card-body h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  text-align: center;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.rc-card-body p {
+  color: #5a6c7d;
+  text-align: center;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Liste de fonctionnalités */
+.rc-card-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rc-card-body li {
+  font-size: 0.85rem;
+  color: #5a6c7d;
+  padding-left: 1.2rem;
+  position: relative;
+}
+
+.rc-card-body li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  font-weight: 700;
+}
+
+.rc-card--patient li::before {
+  color: #38ef7d;
+}
+
+.rc-card--medecin li::before {
+  color: #ffc107;
+}
+
+/* Bouton d'action */
+.rc-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-top: auto;
+  transition: transform 0.2s ease;
+}
+
+.rc-card:hover .rc-action {
+  transform: translateX(4px);
+}
+
+.rc-action--patient {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+}
+
+.rc-action--medecin {
+  background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+  color: #2c3e50;
+}
+
+/* ==================== */
+/* SECTION AVANTAGES    */
+/* ==================== */
+.rc-benefits {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.rc-benefits h4 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.25rem;
+}
+
+.rc-benefits-grid {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.rc-benefit {
+  background: white;
+  border-radius: 14px;
+  padding: 1.25rem;
+  width: 200px;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.rc-benefit:hover {
+  border-color: #38ef7d;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(56, 239, 125, 0.15);
+}
+
+.rc-benefit-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.rc-benefit h6 {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.4rem;
+}
+
+.rc-benefit p {
+  color: #5a6c7d;
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ==================== */
+/* RESPONSIVE           */
+/* ==================== */
+@media (max-width: 768px) {
+  .rc-topbar-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .rc-topbar-left {
+    justify-content: center;
+  }
+
+  .rc-btn-primary,
+  .rc-btn-outline {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .rc-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .rc-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .rc-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .rc-card {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  .rc-benefits-grid {
+    gap: 0.75rem;
+  }
+
+  .rc-benefit {
+    width: 100%;
+    max-width: 280px;
+  }
+}

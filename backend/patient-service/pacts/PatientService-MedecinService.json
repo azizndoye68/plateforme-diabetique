@@ -1,0 +1,228 @@
+{
+  "consumer": {
+    "name": "PatientService"
+  },
+  "interactions": [
+    {
+      "comments": {
+        "text": [
+
+        ]
+      },
+      "description": "GET /api/medecins/999 \u2014 m\u00E9decin absent",
+      "key": "352f1e87",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "aucun m\u00E9decin avec l'ID 999"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/medecins/999"
+      },
+      "response": {
+        "status": 404
+      },
+      "transport": "https",
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "text": [
+
+        ]
+      },
+      "description": "GET /api/medecins/numero/MED00XXX \u2014 m\u00E9decin absent",
+      "key": "4078666f",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "aucun m\u00E9decin avec le num\u00E9ro MED00XXX"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/medecins/numero/MED00XXX"
+      },
+      "response": {
+        "status": 404
+      },
+      "transport": "https",
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "text": [
+
+        ]
+      },
+      "description": "GET /api/equipes-medicales/medecin/1",
+      "key": "e9b58820",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "le m\u00E9decin ID 1 a des \u00E9quipes m\u00E9dicales"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/equipes-medicales/medecin/1"
+      },
+      "response": {
+        "body": {
+          "content": [
+            {
+              "id": 1,
+              "medecinProprietaireId": 1,
+              "medecinsIds": [
+                1,
+                2
+              ],
+              "nom": "Equipe Diabetologie"
+            }
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "status": 200
+      },
+      "transport": "https",
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "text": [
+
+        ]
+      },
+      "description": "GET /api/equipes-medicales/medecin/2 \u2014 aucune \u00E9quipe",
+      "key": "5297f236",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "le m\u00E9decin ID 2 n'a aucune \u00E9quipe"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/equipes-medicales/medecin/2"
+      },
+      "response": {
+        "body": {
+          "content": [
+
+          ],
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "status": 200
+      },
+      "transport": "https",
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "text": [
+
+        ]
+      },
+      "description": "GET /api/medecins/1",
+      "key": "8fb68da",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "un m\u00E9decin avec l'ID 1 existe"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/medecins/1"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": 1,
+            "nom": "Diallo",
+            "numeroProfessionnel": "MED25ABC",
+            "prenom": "Moussa",
+            "specialite": "Endocrinologie",
+            "telephone": "771234567"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "status": 200
+      },
+      "transport": "https",
+      "type": "Synchronous/HTTP"
+    },
+    {
+      "comments": {
+        "text": [
+
+        ]
+      },
+      "description": "GET /api/medecins/numero/MED25ABC",
+      "key": "a5edeee6",
+      "pending": false,
+      "providerStates": [
+        {
+          "name": "un m\u00E9decin avec le num\u00E9ro MED25ABC existe"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/medecins/numero/MED25ABC"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": 1,
+            "nom": "Diallo",
+            "numeroProfessionnel": "MED25ABC",
+            "prenom": "Moussa",
+            "specialite": "Endocrinologie",
+            "telephone": "771234567"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "status": 200
+      },
+      "transport": "https",
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.6.7"
+    },
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  },
+  "provider": {
+    "name": "MedecinService"
+  }
+}

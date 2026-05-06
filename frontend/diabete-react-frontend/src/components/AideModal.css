@@ -1,0 +1,336 @@
+/* AideModal.css */
+
+/* Modal personnalisé */
+.aide-modal .modal-content {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* En-tête du modal */
+.aide-modal-header {
+  padding: 1.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.aide-modal-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.aide-modal-header .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.aide-modal-header .btn-close:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+
+/* Corps du modal */
+.aide-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Scrollbar personnalisée */
+.aide-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.aide-modal-body::-webkit-scrollbar-track {
+  background: #f1f3f5;
+  border-radius: 10px;
+}
+
+.aide-modal-body::-webkit-scrollbar-thumb {
+  background: #38ef7d;
+  border-radius: 10px;
+}
+
+.aide-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #11998e;
+}
+
+/* Carte de ressource d'aide */
+.help-resource-card {
+  border: none !important;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.help-resource-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+}
+
+/* Icône de ressource */
+.resource-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.resource-icon i {
+  font-size: 1.5rem;
+  color: white;
+}
+
+/* Info de ressource */
+.resource-info {
+  padding: 0.5rem;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.resource-link {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.resource-link i {
+  transition: transform 0.3s ease;
+}
+
+.help-resource-card:hover .resource-link i {
+  transform: translateX(5px);
+}
+
+/* Container FAQ */
+.faq-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Item FAQ */
+.faq-item {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 2px solid #f1f3f5;
+  transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+  border-color: #11998e;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.1);
+}
+
+.faq-question {
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.faq-question i {
+  transition: transform 0.3s ease;
+}
+
+.faq-item:hover .faq-question i {
+  transform: translateX(3px);
+}
+
+.faq-answer {
+  color: #718096;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding-left: 1.5rem;
+}
+
+/* Carte d'information */
+.info-card {
+  border: none !important;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+  border-left: 4px solid #17a2b8 !important;
+}
+
+/* Carte de conseil */
+.tip-card {
+  border: none !important;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #ffffff 0%, #fff8e1 100%);
+  border-left: 4px solid #ffc107 !important;
+}
+
+/* Bouton de fermeture */
+.btn-close-modal {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-close-modal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* Footer du modal */
+.aide-modal-footer {
+  padding: 1rem 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .aide-modal-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .aide-modal-header .modal-title {
+    font-size: 1.2rem;
+  }
+
+  .aide-modal-header .modal-title i {
+    font-size: 1.3rem !important;
+  }
+
+  .aide-modal-body {
+    padding: 1.5rem !important;
+  }
+
+  .resource-icon {
+    width: 45px;
+    height: 45px;
+  }
+
+  .resource-icon i {
+    font-size: 1.3rem;
+  }
+
+  .help-resource-card .card-body {
+    padding: 0.75rem !important;
+  }
+
+  .faq-item {
+    padding: 0.75rem;
+  }
+
+  .faq-question {
+    font-size: 0.9rem;
+  }
+
+  .faq-answer {
+    font-size: 0.85rem;
+  }
+
+  .info-card .col-md-1,
+  .info-card .col-md-11 {
+    width: 100%;
+  }
+
+  .info-card .text-center {
+    text-align: left !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .btn-close-modal {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .aide-modal .modal-lg {
+    max-width: 95%;
+  }
+
+  .resource-info,
+  .resource-link {
+    font-size: 0.85rem;
+  }
+}
+
+.aide-modal .modal-lg {
+  max-width: 520px !important;
+}
+
+.aide-modal-header {
+  padding: 1rem 1.5rem;
+}
+
+.aide-modal-body {
+  max-height: 55vh;
+  padding: 1.25rem !important;
+}
+
+.aide-modal-footer {
+  padding: 0.75rem 1.5rem;
+}
+
+.resource-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.resource-icon i {
+  font-size: 1.2rem;
+}
+
+.help-resource-card .card-body {
+  padding: 0.75rem !important;
+}
+
+.faq-item {
+  padding: 0.75rem;
+}
+
+.faq-question {
+  font-size: 0.88rem;
+  margin-bottom: 0.3rem;
+}
+
+.faq-answer {
+  font-size: 0.82rem;
+}
+
+.info-card .card-body,
+.tip-card .card-body {
+  padding: 0.75rem !important;
+}
+
+.info-card p,
+.tip-card p {
+  font-size: 0.82rem;
+}
+
+h5.fw-bold {
+  font-size: 0.95rem;
+  margin-bottom: 0.6rem !important;
+}
+
+h6.fw-bold {
+  font-size: 0.88rem;
+}
+
+.resource-info,
+.resource-link {
+  font-size: 0.82rem;
+}
+
+p.text-muted.small {
+  font-size: 0.82rem !important;
+  margin-bottom: 0.3rem !important;
+}

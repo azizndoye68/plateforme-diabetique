@@ -1,0 +1,533 @@
+/* src/pages/patient/ChatPatient.css */
+
+:root {
+  --green-light: #38ef7d;
+  --green-dark: #11998e;
+  --green-darker: #0d857a;
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --bg: #f8fafc;
+  --white: #ffffff;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+  --radius: 16px;
+}
+
+/* ==================== */
+/* LAYOUT */
+/* ==================== */
+.cp-wrapper {
+  display: flex;
+  height: 100vh;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.cp-main {
+  margin-left: 272px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ==================== */
+/* LOADING */
+/* ==================== */
+.cp-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 1rem;
+  color: var(--text-muted);
+}
+
+.cp-spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--border);
+  border-top-color: var(--green-dark);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==================== */
+/* HEADER */
+/* ==================== */
+.cp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.75rem;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.cp-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cp-header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.4rem;
+  box-shadow: 0 6px 18px rgba(17, 153, 142, 0.3);
+  flex-shrink: 0;
+}
+
+.cp-header-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--green-dark);
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+
+.cp-header-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0 0 0.2rem;
+  line-height: 1;
+}
+
+.cp-header-status {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.cp-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cp-status-dot.online {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  animation: pulse 2s infinite;
+}
+
+.cp-status-dot.offline {
+  background: #94a3b8;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Équipe */
+.cp-equipe {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cp-membre {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 0.5rem 0.85rem;
+}
+
+.cp-membre-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.cp-membre-nom {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.cp-membre-spec {
+  font-size: 0.75rem;
+  color: var(--green-dark);
+}
+
+/* ==================== */
+/* ZONE CHAT */
+/* ==================== */
+.cp-chat-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 1.75rem 1.25rem;
+  margin-top: 1rem;
+}
+
+/* ==================== */
+/* MESSAGES */
+/* ==================== */
+.cp-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--white);
+  border-radius: var(--radius) var(--radius) 0 0;
+  border: 1px solid var(--border);
+  border-bottom: none;
+}
+
+.cp-messages::-webkit-scrollbar { width: 6px; }
+.cp-messages::-webkit-scrollbar-track { background: transparent; }
+.cp-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.cp-messages::-webkit-scrollbar-thumb:hover { background: var(--green-dark); }
+
+/* Empty state */
+.cp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem;
+}
+
+.cp-empty-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--green-dark);
+  margin-bottom: 1rem;
+}
+
+.cp-empty h5 {
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+}
+
+.cp-empty p {
+  margin: 0;
+  font-size: 0.88rem;
+  max-width: 300px;
+}
+
+/* ==================== */
+/* MESSAGE ITEM */
+/* ==================== */
+.cp-msg {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  animation: msgIn 0.25s ease;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cp-msg-in  { justify-content: flex-start; }
+.cp-msg-out { justify-content: flex-end; }
+
+/* Avatar reçu (médecin) */
+.cp-msg-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* Avatar envoyé (patient) */
+.cp-msg-avatar-me {
+  background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+  color: white;
+}
+
+.cp-msg-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 65%;
+}
+
+.cp-msg-sender {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 0.3rem;
+  padding-left: 0.25rem;
+}
+
+/* Bulle message */
+.cp-msg-bubble {
+  padding: 0.75rem 1rem;
+  border-radius: 18px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* ===== MESSAGE REÇU (médecin) — blanc avec bordure ===== */
+.cp-bubble-in {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  color: var(--text-dark);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* ===== MESSAGE ENVOYÉ (patient) — gradient vert ===== */
+.cp-bubble-out {
+  background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+  color: white;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+}
+
+/* Heure */
+.cp-msg-time {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+  padding: 0 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cp-time-out {
+  justify-content: flex-end;
+}
+
+/* Fichier */
+.cp-msg-file {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.cp-file-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d4ed8;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.cp-file-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.cp-file-size {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.cp-file-download {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.cp-file-download:hover {
+  transform: translateY(-1px);
+  color: white;
+}
+
+/* ==================== */
+/* ZONE SAISIE */
+/* ==================== */
+.cp-input-area {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 0.85rem 1rem;
+  flex-shrink: 0;
+}
+
+.cp-secure-note {
+  font-size: 0.72rem;
+  color: var(--green-dark);
+  text-align: center;
+  margin-bottom: 0.6rem;
+  opacity: 0.8;
+}
+
+.cp-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #f8fafc;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 0.4rem 0.5rem;
+  transition: border-color 0.2s;
+}
+
+.cp-input-row:focus-within {
+  border-color: var(--green-dark);
+  box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+}
+
+.cp-attach-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.cp-attach-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: var(--green-dark);
+}
+
+.cp-attach-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cp-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.92rem;
+  color: var(--text-dark);
+  padding: 0.3rem 0;
+}
+
+.cp-input::placeholder {
+  color: #94a3b8;
+}
+
+.cp-send-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.25s;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+}
+
+.cp-send-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(17, 153, 142, 0.4);
+}
+
+.cp-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cp-mini-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: var(--green-dark);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* ==================== */
+/* RESPONSIVE */
+/* ==================== */
+@media (max-width: 992px) {
+  .cp-main { margin-left: 0; }
+  .cp-chat-wrapper { padding: 0 1rem 1rem; }
+}
+
+@media (max-width: 768px) {
+  .cp-header { padding: 0.75rem 1rem; }
+  .cp-equipe { display: none; }
+  .cp-msg-content { max-width: 80%; }
+}
+
+@media (max-width: 992px) {
+  .cp-main {
+    margin-left: 72px;
+  }
+}

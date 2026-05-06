@@ -1,0 +1,448 @@
+/* AjouterDonneeJournee.css */
+
+/* Wrapper principal */
+.ajouter-donnee-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  position: relative;
+}
+
+/* Contenu principal */
+.ajouter-donnee-main-content {
+  margin-left: 272px;
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* En-tête moderne avec gradient */
+.ajouter-donnee-header {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  padding: 0.75rem 3rem;
+  box-shadow: 0 4px 20px rgba(5, 96, 38, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.ajouter-donnee-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.welcome-section {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.greeting-text h1 {
+  color: white;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.greeting-text p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1rem;
+}
+
+.time-display {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  border-radius: 16px;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.action-header-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px);
+  border: none !important;
+  color: white !important;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.action-header-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenu principal */
+.ajouter-donnee-content {
+  padding: 2rem 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Carte principale avec onglets */
+.form-tabs-card {
+  border: none !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+  overflow: hidden;
+}
+
+/* En-tête des onglets */
+.tabs-header {
+  background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+  padding: 1.5rem;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+/* Navigation personnalisée */
+.custom-tabs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: none !important;
+}
+
+.custom-tabs .nav-item {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Lien d'onglet */
+.tab-link {
+  display: flex !important;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem !important;
+  border-radius: 12px !important;
+  border: 2px solid transparent !important;
+  background: white !important;
+  color: #6c757d !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tab-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(3, 130, 83, 0.1);
+  border-color: rgba(2, 93, 50, 0.3) !important;
+}
+
+.tab-link.active {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  color: white !important;
+  border-color: transparent !important;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(4, 125, 75, 0.3);
+}
+
+/* Icône d'onglet */
+.tab-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.tab-icon i {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.tab-link:not(.active) .tab-icon {
+  opacity: 0.7;
+}
+
+.tab-link.active .tab-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Texte d'onglet */
+.tab-text {
+  text-align: left;
+}
+
+.tab-title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.tab-text small {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Contenu des onglets */
+.tabs-content {
+  min-height: 400px;
+}
+
+/* En-tête de formulaire */
+.form-header h5 {
+  color: #2d3748;
+}
+
+.form-header p {
+  font-size: 0.95rem;
+}
+
+/* Champs de formulaire */
+.form-input {
+  border-radius: 10px !important;
+  border: 2px solid #e9ecef !important;
+  padding: 0.75rem 1rem !important;
+  transition: all 0.3s ease !important;
+  font-size: 0.95rem !important;
+}
+
+.form-input:focus {
+  border-color: #11998e !important;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15) !important;
+}
+
+/* Labels */
+.form-label {
+  color: #495057;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.fw-semibold {
+  font-weight: 600 !important;
+}
+
+/* Bouton de soumission */
+.btn-submit {
+  border-radius: 12px !important;
+  padding: 0.875rem 1.5rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  border: none !important;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+  font-size: 1rem !important;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Carte de succès */
+.success-card-modern {
+  border: none !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: white;
+}
+
+.success-icon {
+  color: #28a745;
+  animation: successPulse 1s ease-out;
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-card-modern h3 {
+  color: #2d3748;
+}
+
+/* Boutons d'action */
+.btn-action {
+  border-radius: 12px !important;
+  padding: 0.75rem 2rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-action:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+}
+
+.btn-action-outline {
+  border-radius: 12px !important;
+  padding: 0.75rem 2rem !important;
+  font-weight: 600 !important;
+  border: 2px solid #38ef7d !important;
+  color: #38ef7d !important;
+  background: white !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-action-outline:hover {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%) !important;
+  color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .ajouter-donnee-main-content {
+    margin-left: 0;
+  }
+
+  .ajouter-donnee-header {
+    padding: 1.5rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .welcome-section {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .time-display {
+    font-size: 1.5rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .action-header-btn {
+    flex: 1;
+  }
+
+  .ajouter-donnee-content {
+    padding: 1.5rem;
+  }
+
+  .custom-tabs .nav-item {
+    min-width: 100%;
+  }
+
+  .tab-link {
+    padding: 0.875rem 1rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .greeting-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .tabs-header {
+    padding: 1rem;
+  }
+
+  .tab-icon {
+    width: 45px;
+    height: 45px;
+  }
+
+  .tab-icon i {
+    font-size: 1.3rem;
+  }
+
+  .tab-title {
+    font-size: 0.95rem;
+  }
+
+  .tab-text small {
+    font-size: 0.8rem;
+  }
+
+  .tabs-content {
+    padding: 1.5rem !important;
+  }
+
+  .btn-action,
+  .btn-action-outline {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .ajouter-donnee-header {
+    padding: 1rem;
+  }
+
+  .ajouter-donnee-content {
+    padding: 1rem;
+  }
+
+  .time-display {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .form-tabs-card {
+    border-radius: 16px;
+  }
+
+  .tab-link {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem !important;
+  }
+
+  .tab-text {
+    text-align: center;
+  }
+}
+
+@media (max-width: 992px) {
+  .ajouter-donnee-main-content {
+    margin-left: 72px;
+  }
+}

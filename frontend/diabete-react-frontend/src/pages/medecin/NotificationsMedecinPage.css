@@ -1,0 +1,300 @@
+/* src/pages/medecin/NotificationsMedecinPage.css */
+
+.notif-med-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+}
+
+.notif-med-content {
+  padding-bottom: 2rem;
+}
+
+/* Header */
+.notif-med-header {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(17, 153, 142, 0.2);
+}
+
+.notif-med-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.notif-med-back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.notif-med-back-btn:hover { background: rgba(255, 255, 255, 0.35); }
+
+.notif-med-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.notif-med-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+.notif-med-mark-all-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.notif-med-mark-all-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: white;
+}
+
+/* Filtres */
+.notif-med-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.notif-med-filter-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.notif-med-filter-btn {
+  background: #f8fafc;
+  border: 1.5px solid #e5e7eb;
+  color: #6b7280;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notif-med-filter-btn:hover { border-color: #11998e; color: #11998e; }
+
+.notif-med-filter-btn.active {
+  background: #11998e;
+  border-color: #11998e;
+  color: white;
+}
+
+.notif-med-filter-count {
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.notif-med-filter-btn.active .notif-med-filter-count {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.notif-med-type-select {
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  color: #374151;
+  background: white;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.notif-med-type-select:focus { border-color: #11998e; }
+
+/* Liste */
+.notif-med-list {
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Cards */
+.notif-med-card {
+  background: white;
+  border-radius: 14px;
+  border: 1.5px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.notif-med-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-color: #e5e7eb;
+}
+
+.notif-med-card--unread {
+  border-left: 4px solid #11998e;
+  background: #f0fdf9;
+}
+
+.notif-med-card-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+}
+
+.notif-med-card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.notif-med-card-body { flex: 1; min-width: 0; }
+
+.notif-med-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.notif-med-card-type {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.notif-med-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.notif-med-card-canal {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.notif-med-card-date {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.notif-med-card-preview {
+  font-size: 0.85rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.notif-med-card-read-date {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin: 6px 0 0;
+  font-style: italic;
+}
+
+.notif-med-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.notif-med-card-dot {
+  width: 10px;
+  height: 10px;
+  background: #11998e;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.notif-med-card-chevron {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* Vide / loading */
+.notif-med-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: #9ca3af;
+  text-align: center;
+  gap: 1rem;
+}
+
+.notif-med-empty i {
+  font-size: 3.5rem;
+  opacity: 0.25;
+}
+
+.notif-med-empty h5 { color: #6b7280; margin: 0; }
+.notif-med-empty p  { font-size: 0.9rem; margin: 0; }
+
+.notif-med-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #11998e;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .notif-med-header { padding: 1rem; flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .notif-med-filters { padding: 0.75rem 1rem; }
+  .notif-med-list { padding: 1rem; }
+  .notif-med-card-top { flex-direction: column; align-items: flex-start; }
+}

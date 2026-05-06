@@ -1,0 +1,570 @@
+/* src/pages/RendezVousMedecin.css */
+
+/* ==================== */
+/* LOADING */
+/* ==================== */
+.rdv-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border-width: 3px;
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* ==================== */
+/* LAYOUT PRINCIPAL */
+/* ==================== */
+.rdv-row {
+  min-height: 100vh;
+}
+
+.rdv-medecin-page {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.rdv-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ==================== */
+/* EN-TÊTE */
+/* ==================== */
+.rdv-header {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.header-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.header-info {
+  flex: 1;
+}
+
+.header-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.header-subtitle {
+  color: #6c757d;
+  font-size: 1rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.type-badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  font-weight: 600;
+}
+
+.btn-retour {
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: 2px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.btn-retour:hover {
+  border-color: #38ef7d;
+  color: #38ef7d;
+  transform: translateY(-2px);
+}
+
+/* ==================== */
+/* ALERT SUCCÈS */
+/* ==================== */
+.success-alert-rdv {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-left: 4px solid #28a745;
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.alert-icon {
+  font-size: 1.75rem;
+  color: #28a745;
+  flex-shrink: 0;
+}
+
+.alert-text strong {
+  display: block;
+  color: #155724;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.alert-text .text-muted {
+  color: #155724 !important;
+  opacity: 0.8;
+}
+
+/* ==================== */
+/* CARTE FORMULAIRE */
+/* ==================== */
+.rdv-form-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.card-body-custom {
+  padding: 2.5rem;
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.section-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.25rem 0;
+}
+
+.section-subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ==================== */
+/* FORMULAIRE */
+/* ==================== */
+.form-group-custom {
+  margin-bottom: 2rem;
+}
+
+.form-label-custom {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-control-custom {
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form-control-custom:focus {
+  border-color: #38ef7d;
+  box-shadow: 0 0 0 0.2rem rgba(56, 239, 125, 0.15);
+}
+
+.form-actions,
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f1f3f5;
+  flex-wrap: wrap;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(56, 239, 125, 0.3);
+  flex: 1;
+  min-width: 200px;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(56, 239, 125, 0.4);
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+}
+
+.btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  border: 2px solid #dee2e6;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  border-color: #dc3545;
+  color: #dc3545;
+  transform: translateY(-2px);
+}
+
+/* ==================== */
+/* CARTE HISTORIQUE */
+/* ==================== */
+.history-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.history-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.25rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.history-subtitle {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ==================== */
+/* TABLE */
+/* ==================== */
+.rdv-table {
+  margin: 0;
+}
+
+.rdv-table thead {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.rdv-table thead th {
+  border: none;
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rdv-table tbody tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.rdv-table tbody tr:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.rdv-table tbody td {
+  padding: 1.25rem 1rem;
+  vertical-align: middle;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.date-cell {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.motif-cell {
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statut-badge {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.btn-edit {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+}
+
+.btn-delete {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(250, 112, 154, 0.3);
+}
+
+.empty-state {
+  padding: 3rem 1rem !important;
+  color: #6c757d;
+}
+
+/* ==================== */
+/* MODAL */
+/* ==================== */
+.modal-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 2px solid #e9ecef;
+}
+
+.modal-title {
+  color: #2c3e50;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.modal-actions {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+}
+
+/* ==================== */
+/* RESPONSIVE */
+/* ==================== */
+@media (max-width: 1200px) {
+  .card-body-custom {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .rdv-medecin-page {
+    padding: 1.5rem;
+  }
+
+  .rdv-header {
+    padding: 1.5rem;
+  }
+
+  .header-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .rdv-medecin-page {
+    padding: 1rem;
+  }
+
+  .rdv-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem;
+  }
+
+  .header-content {
+    width: 100%;
+  }
+
+  .btn-retour {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card-body-custom {
+    padding: 1.5rem;
+  }
+
+  .form-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-actions,
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .rdv-table {
+    font-size: 0.85rem;
+  }
+
+  .rdv-table thead th {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .rdv-table tbody td {
+    padding: 1rem 0.5rem;
+  }
+
+  .motif-cell {
+    max-width: 200px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .section-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.35rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .motif-cell {
+    max-width: 150px;
+  }
+}

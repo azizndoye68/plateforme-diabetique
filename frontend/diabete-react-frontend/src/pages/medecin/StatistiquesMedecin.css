@@ -1,0 +1,366 @@
+/* src/pages/medecin/StatistiquesMedecin.css */
+/* Palette : #11998e / #667eea / #f59e0b / #0ea5e9 — tailles compactes */
+
+/* ================================ */
+/* LAYOUT                           */
+/* ================================ */
+.stats-medecin-wrapper {
+  min-height: 100vh;
+  background: #f0f4f8;
+  padding-top: 0;
+}
+
+.stats-medecin-content {
+  padding: 0.5rem 1.5rem 2.5rem;
+  padding-top: 25px;
+  min-height: calc(100vh - 70px);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ================================ */
+/* ANIMATION                        */
+/* ================================ */
+.sm-fade {
+  animation: sm-up 0.4s ease both;
+  animation-delay: var(--d, 0ms);
+}
+
+@keyframes sm-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================ */
+/* EN-TÊTE                          */
+/* ================================ */
+.stats-header {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  box-shadow: 0 6px 24px rgba(17,153,142,.25);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.1rem;
+}
+
+.stats-header::before {
+  content: '';
+  position: absolute;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.07);
+  top: -90px; right: -50px;
+  pointer-events: none;
+}
+
+.stats-header-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.stats-icon-wrapper {
+  width: 44px; height: 44px;
+  border-radius: 11px;
+  background: rgba(255,255,255,.22);
+  border: 1px solid rgba(255,255,255,.3);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.stats-header h2 {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0 0 .2rem;
+  text-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+
+.stats-header p {
+  font-size: .78rem;
+  color: rgba(255,255,255,.82);
+  margin: 0;
+}
+
+.btn-export {
+  background: rgba(255,255,255,.2) !important;
+  border: 1.5px solid rgba(255,255,255,.35) !important;
+  padding: .5rem 1.1rem !important;
+  border-radius: 9px !important;
+  font-weight: 700 !important;
+  font-size: .78rem !important;
+  color: white !important;
+  transition: all .2s ease !important;
+  position: relative;
+  z-index: 1;
+  backdrop-filter: blur(8px);
+}
+
+.btn-export:hover,
+.btn-export:focus {
+  background: rgba(255,255,255,.32) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.12) !important;
+  color: white !important;
+  outline: none !important;
+}
+
+/* ================================ */
+/* FILTRES                          */
+/* ================================ */
+.filter-card {
+  border: 1.5px solid #f1f5f9 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05) !important;
+  overflow: hidden;
+  margin-bottom: 1.1rem;
+}
+
+.filter-card .card-body {
+  background: white;
+  padding: 1rem 1.25rem !important;
+}
+
+.filter-card .fw-semibold {
+  font-size: .75rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: .35rem;
+  display: block;
+}
+
+.form-select-custom {
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 9px !important;
+  padding: .5rem .875rem !important;
+  font-size: .84rem !important;
+  background-color: #f8fafc !important;
+  color: #1e293b !important;
+  transition: all .2s ease !important;
+  height: auto !important;
+}
+
+.form-select-custom:focus {
+  border-color: #11998e !important;
+  box-shadow: 0 0 0 3px rgba(17,153,142,.1) !important;
+  background-color: white !important;
+  outline: none !important;
+}
+
+.btn-filter {
+  background: linear-gradient(135deg, #11998e, #38ef7d) !important;
+  border: none !important;
+  padding: .52rem 1rem !important;
+  border-radius: 9px !important;
+  font-weight: 700 !important;
+  font-size: .8rem !important;
+  color: white !important;
+  transition: all .2s ease !important;
+  box-shadow: 0 3px 10px rgba(17,153,142,.25) !important;
+}
+
+.btn-filter:hover:not(:disabled),
+.btn-filter:focus:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(17,153,142,.35) !important;
+  color: white !important;
+  outline: none !important;
+}
+
+.btn-filter:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ================================ */
+/* CARTES KPI MINI                  */
+/* ================================ */
+.stat-card-mini {
+  border: 1.5px solid #f1f5f9 !important;
+  border-radius: 13px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05) !important;
+  transition: all .25s ease !important;
+  overflow: hidden;
+  background: white !important;
+  height: 100%;
+}
+
+.stat-card-mini:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 22px rgba(0,0,0,.1) !important;
+}
+
+.stat-card-mini .card-body {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .875rem 1rem !important;
+}
+
+.stat-mini-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.stat-mini-info { flex: 1; min-width: 0; }
+
+.stat-mini-label {
+  display: block;
+  color: #64748b;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  margin-bottom: .15rem;
+}
+
+.stat-mini-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  line-height: 1;
+}
+
+.stat-mini-value small {
+  font-size: .65rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-left: .2rem;
+}
+
+/* ================================ */
+/* CARTES GRAPHIQUES                */
+/* ================================ */
+.chart-card {
+  border: 1.5px solid #f1f5f9 !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05) !important;
+  transition: box-shadow .25s ease !important;
+  background: white !important;
+  height: 100%;
+}
+
+.chart-card:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,.09) !important;
+}
+
+.chart-card .card-body {
+  padding: 1.1rem 1.25rem !important;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.chart-header h5 {
+  margin: 0;
+  color: #1e293b;
+  font-size: .88rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+}
+
+.badge-chart {
+  background: linear-gradient(135deg, #11998e, #38ef7d) !important;
+  padding: .22rem .65rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: .65rem !important;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: white !important;
+}
+
+/* ================================ */
+/* RECHARTS                         */
+/* ================================ */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #f1f5f9;
+}
+
+.recharts-text {
+  fill: #64748b;
+  font-size: 11px;
+}
+
+.recharts-legend-wrapper {
+  padding-top: .5rem;
+}
+
+.recharts-tooltip-wrapper { outline: none; }
+
+/* ================================ */
+/* IMPRESSION                       */
+/* ================================ */
+@media print {
+  .btn-export,
+  .filter-card { display: none; }
+
+  .chart-card {
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #dee2e6 !important;
+  }
+
+  .stats-header {
+    box-shadow: none;
+    background: #11998e !important;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+/* ================================ */
+/* RESPONSIVE                       */
+/* ================================ */
+@media (max-width: 1200px) {
+  .stats-medecin-content { padding: 1rem 1.25rem 2rem; padding-top: 80px; }
+}
+
+@media (max-width: 992px) {
+  .stats-header { flex-direction: column; align-items: flex-start; }
+  .btn-export   { width: 100%; justify-content: center; }
+  .stats-medecin-content { padding: 1rem; padding-top: 75px; }
+}
+
+@media (max-width: 768px) {
+  .stats-header        { padding: 1rem 1.25rem; border-radius: 12px; }
+  .stats-icon-wrapper  { width: 38px; height: 38px; font-size: 1rem; }
+  .stats-header h2     { font-size: 1.05rem; }
+  .filter-card .card-body { padding: .875rem !important; }
+  .stat-card-mini .card-body { padding: .75rem !important; }
+  .stat-mini-icon      { width: 36px; height: 36px; font-size: 1rem; }
+  .stat-mini-value     { font-size: 1.15rem; }
+  .chart-card .card-body { padding: 1rem !important; }
+  .chart-header h5     { font-size: .82rem; }
+}
+
+@media (max-width: 576px) {
+  .stats-header-content { flex-direction: column; align-items: flex-start; gap: .75rem; }
+  .stats-header h2      { font-size: 1rem; }
+  .stat-card-mini       { margin-bottom: .5rem; }
+  .stat-mini-value      { font-size: 1.1rem; }
+  .chart-header         { flex-direction: column; align-items: flex-start; }
+}

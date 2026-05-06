@@ -1,0 +1,759 @@
+/* src/pages/ConsultationsMedecin.css */
+
+/* ==================== */
+/* LOADING */
+/* ==================== */
+.consultation-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border-width: 3px;
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* ==================== */
+/* LAYOUT PRINCIPAL */
+/* ==================== */
+.consultation-row {
+  min-height: 100vh;
+}
+
+.consultations-medecin-page {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.consultation-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ==================== */
+/* EN-TÊTE */
+/* ==================== */
+.consultation-header {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.header-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.header-info {
+  flex: 1;
+}
+
+.header-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+}
+
+.header-subtitle {
+  color: #6c757d;
+  font-size: 1rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.type-badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  font-weight: 600;
+}
+
+.btn-retour {
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border: 2px solid #dee2e6;
+  transition: all 0.3s ease;
+}
+
+.btn-retour:hover {
+  border-color: #38ef7d;
+  color: #38ef7d;
+  transform: translateY(-2px);
+}
+
+/* ==================== */
+/* CARTE FORMULAIRE */
+/* ==================== */
+.consultation-form-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.card-body-custom {
+  padding: 2.5rem;
+}
+
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.section-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.25rem 0;
+}
+
+.section-subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ==================== */
+/* FORMULAIRE */
+/* ==================== */
+.form-group-custom {
+  margin-bottom: 2rem;
+}
+
+.form-label-custom {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.form-control-custom {
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form-control-custom:focus {
+  border-color: #38ef7d;
+  box-shadow: 0 0 0 0.2rem rgba(56, 239, 125, 0.15);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid #f1f3f5;
+  flex-wrap: wrap;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(56, 239, 125, 0.3);
+  flex: 1;
+  min-width: 200px;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(56, 239, 125, 0.4);
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  border: 2px solid #dee2e6;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 150px;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  border-color: #dc3545;
+  color: #dc3545;
+  transform: translateY(-2px);
+}
+
+/* ==================== */
+/* CARTE SUCCÈS */
+/* ==================== */
+.success-card-consultation {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(40, 167, 69, 0.15);
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  margin-bottom: 2rem;
+}
+
+.success-icon-wrapper {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.success-icon-wrapper i {
+  font-size: 3.5rem;
+  color: #28a745;
+}
+
+.success-title {
+  font-weight: 700;
+  color: #155724;
+  margin-bottom: 1rem;
+}
+
+.success-text {
+  color: #155724;
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+}
+
+.success-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-success-action {
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-success-action.primary {
+  background: #28a745;
+  color: white;
+}
+
+.btn-success-action.primary:hover {
+  background: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success-action.secondary {
+  background: white;
+  color: #28a745;
+  border: 2px solid #28a745;
+}
+
+.btn-success-action.secondary:hover {
+  background: #28a745;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* ==================== */
+/* CARTE HISTORIQUE */
+/* ==================== */
+.history-card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #f1f3f5;
+}
+
+.history-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.25rem 0;
+  display: flex;
+  align-items: center;
+}
+
+.history-subtitle {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ==================== */
+/* TABLE */
+/* ==================== */
+.consultation-table {
+  margin: 0;
+}
+
+.consultation-table thead {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.consultation-table thead th {
+  border: none;
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.consultation-table tbody tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.consultation-table tbody tr:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.consultation-table tbody td {
+  padding: 1.25rem 1rem;
+  vertical-align: middle;
+  color: #495057;
+  font-size: 0.95rem;
+}
+
+.date-cell {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.motif-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.diagnostic-cell,
+.prescription-cell {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-ordonnance {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-ordonnance:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
+}
+
+.empty-state {
+  padding: 3rem 1rem !important;
+  color: #6c757d;
+}
+
+/* ==================== */
+/* MODAL ORDONNANCE */
+/* ==================== */
+.ordonnance-modal .modal-content {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.ordonnance-container {
+  background: white;
+  padding: 3rem;
+}
+
+.ordonnance-header-print {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.ordonnance-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.ordonnance-medecin-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.ordonnance-medecin-info p {
+  margin: 0.25rem 0;
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+.ordonnance-divider {
+  height: 2px;
+  background: linear-gradient(90deg, #38ef7d 0%, transparent 100%);
+  margin: 2rem 0;
+}
+
+.ordonnance-patient-info {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.ordonnance-patient-info h5 {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.ordonnance-patient-info p {
+  margin: 0.5rem 0;
+  color: #495057;
+}
+
+.ordonnance-content {
+  margin: 2rem 0;
+}
+
+.ordonnance-section {
+  margin-bottom: 2rem;
+}
+
+.ordonnance-section h6 {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.ordonnance-text {
+  color: #495057;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.prescription-box {
+  background: #fff9e6;
+  border-left: 4px solid #ffc107;
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: #495057;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+}
+
+.ordonnance-footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e9ecef;
+}
+
+.signature-section {
+  text-align: right;
+}
+
+.signature-section p {
+  margin: 0.5rem 0;
+  color: #6c757d;
+}
+
+.signature-line {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid #2c3e50;
+  display: inline-block;
+  min-width: 250px;
+}
+
+.ordonnance-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-print {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  border: none;
+  color: white;
+  padding: 0.875rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-print:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* ==================== */
+/* IMPRESSION */
+/* ==================== */
+@media print {
+  .no-print,
+  .consultation-header,
+  .consultation-form-card,
+  .success-card-consultation,
+  .history-card,
+  .sidebar-col,
+  .modal-backdrop {
+    display: none !important;
+  }
+
+  .ordonnance-modal {
+    position: static !important;
+    padding: 0 !important;
+  }
+
+  .ordonnance-modal .modal-dialog {
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .ordonnance-modal .modal-content {
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .ordonnance-modal .modal-body {
+    padding: 0 !important;
+  }
+
+  .ordonnance-container {
+    padding: 2rem;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+}
+
+/* ==================== */
+/* RESPONSIVE */
+/* ==================== */
+@media (max-width: 1200px) {
+  .card-body-custom {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .consultations-medecin-page {
+    padding: 1.5rem;
+  }
+
+  .consultation-header {
+    padding: 1.5rem;
+  }
+
+  .header-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .consultations-medecin-page {
+    padding: 1rem;
+  }
+
+  .consultation-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem;
+  }
+
+  .header-content {
+    width: 100%;
+  }
+
+  .btn-retour {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card-body-custom {
+    padding: 1.5rem;
+  }
+
+  .form-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .consultation-table {
+    font-size: 0.85rem;
+  }
+
+  .consultation-table thead th {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .consultation-table tbody td {
+    padding: 1rem 0.5rem;
+  }
+
+  .diagnostic-cell,
+  .prescription-cell {
+    max-width: 150px;
+  }
+
+  .ordonnance-container {
+    padding: 1.5rem;
+  }
+
+  .ordonnance-header-print {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 576px) {
+  .success-actions {
+    flex-direction: column;
+  }
+
+  .btn-success-action {
+    width: 100%;
+  }
+
+  .history-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
