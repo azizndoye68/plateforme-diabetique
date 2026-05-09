@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
 
   # ===== RABBITMQ =====
-  rabbitmq:
+  rabbitmq-diabete:
     image: rabbitmq:3-management
-    container_name: rabbitmq
+    container_name: rabbitmq-diabete
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -20,7 +18,7 @@ services:
     image: postgres:15
     container_name: db-auth
     environment:
-      POSTGRES_DB: auth_db
+      POSTGRES_DB: auth_service_db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
@@ -30,7 +28,7 @@ services:
     image: postgres:15
     container_name: db-patient
     environment:
-      POSTGRES_DB: patient_db
+      POSTGRES_DB: patient_service_db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
@@ -40,7 +38,7 @@ services:
     image: postgres:15
     container_name: db-medecin
     environment:
-      POSTGRES_DB: medecin_db
+      POSTGRES_DB: medecin_service_db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
@@ -50,7 +48,7 @@ services:
     image: postgres:15
     container_name: db-suivi
     environment:
-      POSTGRES_DB: suivi_db
+      POSTGRES_DB: suivi_medical_db
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
@@ -98,6 +96,9 @@ services:
     container_name: service-register
     ports:
       - "8761:8761"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://service-config:8888
+      SPRING_PROFILES_ACTIVE: dev
     depends_on:
       service-config:
         condition: service_healthy
@@ -115,6 +116,9 @@ services:
     container_name: api-gateway
     ports:
       - "8080:8080"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://service-config:8888
+      SPRING_PROFILES_ACTIVE: dev
     depends_on:
       service-register:
         condition: service_healthy
@@ -127,6 +131,9 @@ services:
     container_name: auth-service
     ports:
       - "8081:8081"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://service-config:8888
+      SPRING_PROFILES_ACTIVE: dev
     depends_on:
       service-register:
         condition: service_healthy
@@ -141,28 +148,34 @@ services:
     container_name: patient-service
     ports:
       - "8082:8082"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://service-config:8888
+      SPRING_PROFILES_ACTIVE: dev
     depends_on:
       service-register:
         condition: service_healthy
       db-patient:
         condition: service_started
-      rabbitmq:
+      rabbitmq-diabete:
         condition: service_started
     networks:
       - diabete-network
 
   # ===== MEDECIN SERVICE =====
   medecin-service:
-    build: ../backend/ProSante-service
+    build: ../backend/ProSante-service/patient-service-master
     container_name: medecin-service
     ports:
       - "8084:8084"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://service-config:8888
+      SPRING_PROFILES_ACTIVE: dev
     depends_on:
       service-register:
         condition: service_healthy
       db-medecin:
         condition: service_started
-      rabbitmq:
+      rabbitmq-diabete:
         condition: service_started
     networks:
       - diabete-network
@@ -173,12 +186,15 @@ services:
     container_name: suivi-medical-service
     ports:
       - "8083:8083"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://service-config:8888
+      SPRING_PROFILES_ACTIVE: dev
     depends_on:
       service-register:
         condition: service_healthy
       db-suivi:
         condition: service_started
-      rabbitmq:
+      rabbitmq-diabete:
         condition: service_started
     networks:
       - diabete-network
@@ -189,12 +205,15 @@ services:
     container_name: notification-service
     ports:
       - "8090:8090"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://service-config:8888
+      SPRING_PROFILES_ACTIVE: dev
     depends_on:
       service-register:
         condition: service_healthy
       db-notification:
         condition: service_started
-      rabbitmq:
+      rabbitmq-diabete:
         condition: service_started
     networks:
       - diabete-network
@@ -205,12 +224,15 @@ services:
     container_name: communication-service
     ports:
       - "8086:8086"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://service-config:8888
+      SPRING_PROFILES_ACTIVE: dev
     depends_on:
       service-register:
         condition: service_healthy
       db-communication:
         condition: service_started
-      rabbitmq:
+      rabbitmq-diabete:
         condition: service_started
     networks:
       - diabete-network

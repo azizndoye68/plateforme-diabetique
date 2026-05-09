@@ -45,7 +45,7 @@ public class PatientService {
                 && !request.getNumeroProfessionnelMedecin().isEmpty()) {
 
             try {
-                String medecinUrl = "http://localhost:8084/api/medecins/numero/" + request.getNumeroProfessionnelMedecin();
+                String medecinUrl = "http://medecin-service:8084/api/medecins/numero/" + request.getNumeroProfessionnelMedecin();
                 Map<?, ?> medecinDto = restTemplate.getForObject(medecinUrl, Map.class);
 
                 if (medecinDto == null || medecinDto.get("id") == null) {
@@ -142,7 +142,7 @@ public class PatientService {
 
         try {
             // 🔹 Appel au microservice Médecin
-            String medecinUrl = "http://localhost:8084/api/medecins/numero/" + numeroProfessionnelMedecin;
+            String medecinUrl = "http://medecin-service:8084/api/medecins/numero/" + numeroProfessionnelMedecin;
             Map<?, ?> medecinDto = restTemplate.getForObject(medecinUrl, Map.class);
 
             if (medecinDto == null || medecinDto.get("id") == null) {
@@ -189,7 +189,7 @@ public class PatientService {
 
         try {
             // 🔹 Vérifier que le médecin existe (appel inter-microservice)
-            String medecinUrl = "http://localhost:8084/api/medecins/" + medecinId;
+            String medecinUrl = "http://medecin-service:8084/api/medecins/" + medecinId;
             Map<?, ?> medecinDto = restTemplate.getForObject(medecinUrl, Map.class);
 
             if (medecinDto == null || medecinDto.get("id") == null) {
@@ -222,7 +222,7 @@ public class PatientService {
 
         // 2️⃣ Récupérer les équipes du médecin (medecin-service)
         String equipesUrl =
-                "http://localhost:8084/api/equipes-medicales/medecin/" + medecinId;
+                "http://medecin-service:8084/api/equipes-medicales/medecin/" + medecinId;
 
         List<Map<String, Object>> equipes;
         try {
