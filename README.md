@@ -1,159 +1,105 @@
-# Plateforme de Suivi des Patients Diabétiques — SuiviDiabète SN
+# SuiviDiabète SN
 
-Plateforme de santé numérique à architecture microservices, dédiée au suivi médical continu et sécurisé des patients diabétiques au Sénégal.
+Plateforme de suivi médical pour patients diabétiques, conçue en architecture microservices. Neuf services indépendants, chacun avec sa propre base de données, orchestrés via Spring Cloud (registre de services, configuration centralisée, passerelle API) et communiquant en asynchrone via RabbitMQ pour les flux événementiels (alertes, notifications).
 
-> Projet réalisé dans le cadre du Mémoire de Master II Génie Logiciel de **Abdoul Aziz NDOYE**, Université Assane Seck de Ziguinchor.
+## Pourquoi une architecture microservices
 
-## Table des matières
+Le choix a été fait en écartant volontairement le monolithe : dans un contexte de santé numérique, les modules (authentification, données médicales, gestion des professionnels, communication) ont des cycles d'évolution et des exigences de sécurité différents. Isoler chaque domaine permet de faire évoluer, tester et déployer un service sans impacter les autres, et de découpler la disponibilité globale de la plateforme d'une panne locale.
 
-- [Contexte](#contexte)
-- [Fonctionnalités](#fonctionnalités)
-- [Architecture](#architecture)
-- [Services de la plateforme](#services-de-la-plateforme)
-- [Bases de données](#bases-de-données)
-- [Stack technique](#stack-technique)
-- [Outils de développement](#outils-de-développement)
-- [Structure d'un microservice](#structure-dun-microservice)
-- [Approche Contract-First](#approche-contract-first)
-- [Stratégie de tests](#stratégie-de-tests)
-- [Méthodologie](#méthodologie)
-- [Interfaces de l'application](#interfaces-de-lapplication)
-- [Auteur](#auteur)
-
-## Contexte
-
-Le diabète représente un enjeu de santé publique majeur au Sénégal, marqué par des défis d'infrastructures, de ressources humaines et d'équipements, ainsi qu'une absence d'interopérabilité entre les systèmes de santé existants. Face aux limites constatées pour les patients, les professionnels de santé et les administrateurs, ce projet propose une plateforme de suivi des patients diabétiques inspirée de solutions comme MyDiabby, Glooko et mySugr, et alignée avec les standards internationaux HL7/FHIR.
-
-## Fonctionnalités
-
-- **Suivi médical quotidien** : enregistrement des mesures de glycémie, du poids, de la tension artérielle et des données du journal de bord (repas, activité physique, symptômes)
-- **Détection d'anomalies** : logique de détection des valeurs anormales déclenchant des alertes médicales automatiques
-- **Gestion des patients** : identité, coordonnées, localisation géographique, objectifs de santé, contenus éducatifs et conseils personnalisés
-- **Gestion des professionnels de santé** : planification des rendez-vous, création et gestion d'équipes médicales pluridisciplinaires
-- **Communication sécurisée** : échange de messages entre patients et professionnels de santé, historique des conversations, pièces jointes (résultats d'analyses, images)
-- **Notifications** : alertes médicales, rappels de rendez-vous et confirmations d'actions envoyés de façon asynchrone
-- **Trois espaces utilisateurs** : Patient, Professionnel de santé et Administrateur, chacun avec son propre tableau de bord
+Le compromis assumé : complexité opérationnelle plus élevée (découverte de services, cohérence des données distribuées, observabilité) en échange de la scalabilité indépendante et de l'isolation des pannes.
 
 ## Architecture
 
-La plateforme repose sur une **architecture microservices**, choisie face aux limites du modèle monolithique (déploiements lourds, couplage fort, faible évolutivité). Elle est composée de **neuf microservices indépendants**, répartis en deux catégories :
+```
+                        ┌────────────────┐
+                        │  Frontend React │
+                        └────────┬────────┘
+                                 │
+                        ┌────────▼────────┐
+                        │   API Gateway    │  auth JWT, routage, CORS, rate limiting
+                        └────────┬────────┘
+                                 │  (consulte le registre pour résoudre chaque service)
+              ┌──────────────────┼──────────────────┐
+              │                  │                   │
+     ┌────────▼───────┐ ┌────────▼────────┐ ┌────────▼─────────┐
+     │ Service-register│ │  Service-config  │ │  Auth-service     │
+     │    (Eureka)      │ │ (config Git)     │ │  (Spring Security) │
+     └──────────────────┘ └──────────────────┘ └────────────────────┘
+              │
+   ┌──────────┼─────────────┬──────────────────┬───────────────────┐
+   │          │              │                  │                   │
+┌──▼───┐ ┌────▼─────┐ ┌──────▼───────┐ ┌────────▼────────┐ ┌────────▼────────┐
+│Patient│ │ProSante  │ │Suivi-Medical │ │Communication     │ │Notification      │
+│service│ │-service  │ │-service      │ │-service           │ │-service (RabbitMQ)│
+└───┬───┘ └────┬─────┘ └──────┬───────┘ └────────┬─────────┘ └────────┬─────────┘
+    │          │              │                  │                    │
+    └──────────┴──────────────┴──────────────────┴────────────────────┘
+                                 │
+                      PostgreSQL (1 base par service)
+```
 
-- **Six services métiers** : Authentification-service, Patient-service, ProSante-service, Suivi-Medical-service, Communication-service, Notification-service
-- **Trois services techniques** : Service-config, Service-register, API-Gateway
+**Séquence de démarrage** : Service-config démarre en premier et sert la configuration de tous les services depuis un dépôt Git. Service-register (Eureka) prend le relais pour l'enregistrement dynamique. Chaque service métier récupère sa config, s'enregistre auprès du registre avec ses infos réseau. L'API Gateway démarre en dernier, une fois le registre peuplé.
 
-### Fonctionnement général
+**Flux d'une requête** : client → API Gateway (validation JWT) → résolution du service cible via Eureka → routage. Les événements asynchrones (alerte glycémique, rappel de rendez-vous) passent par une publication RabbitMQ, consommée par le Notification-service — découplage total entre l'émetteur de l'événement et sa livraison.
 
-Au démarrage de la plateforme :
-1. Le **Service-config** démarre en premier et met à disposition des autres services leurs fichiers de configuration, centralisés dans un dépôt Git.
-2. Le **Service-register** démarre ensuite et se prépare à enregistrer les microservices.
-3. Chaque service métier récupère sa configuration auprès du Service-config, puis s'enregistre auprès du Service-register avec ses informations réseau.
-4. L'**API-Gateway** démarre en dernier et s'appuie sur ces informations pour acheminer les requêtes.
+## Services
 
-En fonctionnement, toute requête d'un patient ou d'un professionnel de santé transite par l'API Gateway, qui vérifie le jeton JWT, interroge le registre pour localiser le microservice concerné, puis transmet la demande. Lorsqu'un événement nécessite une notification (alerte glycémique, rappel de rendez-vous), le service métier concerné publie un message dans **RabbitMQ**, que le Notification-service consomme et achemine vers l'utilisateur destinataire.
-
-## Services de la plateforme
-
-### Services métiers
-
-| Service | Rôle |
+| Service | Responsabilité |
 |---|---|
-| **Authentification-service** *(Spring Security)* | Inscription et authentification des patients, professionnels de santé et administrateurs ; gestion des rôles et droits d'accès ; émission et validation de jetons JWT |
-| **Suivi-Medical-service** *(Spring Boot)* | Cœur fonctionnel de la plateforme : mesures glycémiques, poids, tension artérielle, journal de bord (repas, activité physique, symptômes), traitements en cours, détection des valeurs anormales |
-| **Patient-service** *(Spring Boot)* | Informations démographiques et administratives des patients : identité, coordonnées, localisation, date d'inscription, objectifs de santé, contenus éducatifs |
-| **ProSante-service** *(Spring Boot)* | Informations et activités des professionnels de santé : planification des rendez-vous, création et gestion d'équipes médicales |
-| **Communication-service** | Échanges sécurisés entre patients et professionnels de santé : messages, historique des conversations, pièces jointes |
-| **Notification-service** *(Spring Boot)* | Envoi asynchrone des notifications via RabbitMQ : alertes médicales, rappels de rendez-vous, conseils personnalisés, confirmations d'actions |
+| `api-gateway` | Point d'entrée unique : validation JWT, routage, CORS, rate limiting, logs centralisés |
+| `service-register` | Registre de services (Eureka) — découverte dynamique, aucune adresse en dur |
+| `service-config` | Configuration centralisée versionnée dans Git, propagée sans redémarrage |
+| `auth-service` | Authentification, gestion des rôles (patient / professionnel / admin), émission et validation des JWT |
+| `patient-service` | Profils patients : identité, coordonnées, objectifs de santé |
+| `prosante-service` | Profils professionnels de santé, planification, gestion d'équipes |
+| `suivi-medical-service` | Cœur métier : mesures glycémiques, poids, tension, journal de bord, détection de valeurs anormales |
+| `communication-service` | Messagerie sécurisée patient ↔ professionnel, historique, pièces jointes |
+| `notification-service` | Consommateur RabbitMQ, dispatch des notifications aux utilisateurs concernés |
 
-### Services techniques
-
-| Service | Rôle |
-|---|---|
-| **Service-config** *(Spring Cloud Config)* | Centralise la configuration de tous les microservices dans un dépôt Git ; propage dynamiquement les changements sans redémarrage |
-| **Service-register** *(Spring Cloud Netflix Eureka)* | Annuaire dynamique des microservices ; chaque service s'y enregistre au démarrage (nom, IP, port) |
-| **API-Gateway** *(Spring Cloud Gateway)* | Point d'entrée unique de la plateforme ; vérification des jetons JWT, routage vers le service cible, gestion des règles CORS, limitation du débit, journalisation centralisée |
-
-## Bases de données
-
-Conformément au principe **« une base de données par service »**, chaque microservice métier dispose de sa propre base **PostgreSQL**, indépendante des autres :
-
-- `auth_service_db` — Authentification-service (utilisateurs, rôles, authentification)
-- `patient_service_db` — Patient-service (informations personnelles et médicales)
-- `prosante_service_db` — ProSante-service (données des professionnels de santé)
-- `suivi_medical_db` — Suivi-Medical-service (mesures de glycémie, données de suivi)
-
-Cette séparation réduit le couplage entre services et renforce la scalabilité, la maintenabilité et la résilience du système. La cohérence globale est assurée via les API REST et l'API Gateway.
+Chaque service métier expose son contrat via une API REST spécifiée en amont avec OpenAPI (voir plus bas).
 
 ## Stack technique
 
-**Backend**
-- **Java** — langage principal, portable et orienté objet
-- **Spring Boot** — framework de développement d'applications prêtes pour la production
-- **Spring Cloud** — gestion centralisée de la configuration et découverte de services
-- **Spring Security** — authentification, autorisation et protection contre les attaques courantes (fixation de session, clickjacking, CSRF)
-- **RabbitMQ** — broker de messages (protocole AMQP) pour la communication asynchrone entre services
-- **Apache Tomcat** — serveur d'application embarqué
+- **Backend** : Java 17, Spring Boot, Spring Cloud (Eureka, Gateway, Config), Spring Security (JWT)
+- **Messagerie** : RabbitMQ (AMQP) pour les flux asynchrones inter-services
+- **Frontend** : React, Axios, Bootstrap
+- **Données** : PostgreSQL — une base isolée par service, aucun accès croisé direct
+- **Conteneurisation** : Docker, Docker Compose
 
-**Frontend**
-- **React JS** — bibliothèque de construction d'interfaces, architecture orientée composants
-- **Axios** — requêtes HTTP asynchrones basées sur les promesses
-- **Bootstrap** — framework CSS responsive, approche mobile-first
+## Design d'API — Contract-First
 
-**Base de données**
-- **PostgreSQL** — SGBD relationnel-objet, une instance par microservice
+Les contrats sont définis et validés sur SwaggerHub *avant* l'implémentation, pas générés a posteriori depuis le code. Ce choix impose une discipline sur les interfaces dès la conception et limite les incohérences entre équipes/services consommateurs et fournisseurs — vérifié en continu par des tests de contrat **Pact**, qui font échouer le build si un service casse un contrat consommé par un autre.
 
-## Outils de développement
+## Tests
 
-- **SwaggerHub** — conception, documentation et partage des API selon la spécification OpenAPI
-- **IntelliJ IDEA** — IDE principal pour le développement Java/Spring Boot
-- **Visual Studio Code** — développement frontend
-- **Git / GitHub** — gestion de versions et collaboration
-- **Postman** — tests fonctionnels des API REST
-- **PgAdmin** — administration des bases de données PostgreSQL
-- **Jira** — gestion de projet et suivi des tâches (Scrum/Kanban)
+Stratégie multicouche, chaque niveau couvrant une classe de régression différente :
 
-## Structure d'un microservice
+- **Unitaires / intégration** — logique métier et couche de persistance de chaque service, isolément
+- **Contrat (Pact)** — compatibilité des échanges entre services consommateurs et fournisseurs, indépendamment de leur déploiement simultané
+- **Fonctionnels (Postman)** — scénarios de bout en bout simulant un client réel (inscription, authentification, mise à jour, suppression de compte avec règles de sécurité)
 
-Chaque microservice suit une organisation en packages standardisée, inspirée des bonnes pratiques Spring Boot :
+## Lancer le projet
 
-- `configuration` — configuration Swagger/OpenAPI, beans personnalisés, paramètres globaux
-- `controller` — contrôleurs REST (`@RestController`, `@RequestMapping`), validation des entrées
-- `dto` — objets de transfert de données (Data Transfer Objects)
-- `entity` — entités métier persistées en base de données
-- `application.properties` — nom du service, port, connexion PostgreSQL, adresse Eureka
-- `pom.xml` — dépendances Maven, héritant de `spring-boot-starter-parent`
+```bash
+git clone <url-du-depot>
+cd suivi-diabete-sn
+docker-compose up --build
+```
 
-## Approche Contract-First
+| Service | URL |
+|---|---|
+| Frontend | `http://localhost:3000` |
+| API Gateway | `http://localhost:8080` |
+| Eureka (registre) | `http://localhost:8761` |
 
-L'implémentation de la logique métier suit une démarche **Contract-First** plutôt que Code-First :
+Ordre de démarrage géré par Docker Compose : infrastructure (PostgreSQL, RabbitMQ) → Config Server → Eureka → services métiers → API Gateway.
 
-1. Définition du contrat OpenAPI sur **SwaggerHub** (endpoints, paramètres, formats de requêtes/réponses)
-2. Validation du contrat au regard des besoins fonctionnels
-3. Génération automatique de la documentation de l'API
-4. Création du projet via Spring Initializr
-5. Implémentation de la logique métier à travers les couches contrôleurs, services, repositories et entités
+## Limites connues et pistes d'évolution
 
-Cette démarche garantit la cohérence des interfaces entre services et limite les incohérences lors de l'intégration.
-
-## Stratégie de tests
-
-Une stratégie de tests multicouche a été mise en place :
-
-- **Tests unitaires et d'intégration** — vérification de la robustesse des composants internes de chaque service
-- **Tests de contrat inter-microservices (Pact)** — garantissent la compatibilité des échanges entre microservices consommateurs et fournisseurs
-- **Tests fonctionnels (Postman)** — simulent le comportement d'un client externe pour valider le fonctionnement global du système (ex. inscription, authentification, mise à jour de mot de passe, suppression de compte)
-
-## Méthodologie
-
-Le projet combine les approches **Agile**, **DevOps** et **CI/CD**, adaptées aux besoins fonctionnels évolutifs de la santé numérique et aux exigences élevées de fiabilité du système.
-
-## Interfaces de l'application
-
-- **Interfaces d'accès** : page d'accueil, inscription, connexion
-- **Interface Patient** : tableau de bord, enregistrement des données de suivi, historique (carnet de suivi)
-- **Interface Professionnel de santé** : tableau de bord, communication avec les patients, visualisation des statistiques
-- **Interface Administrateur** : tableau de bord, gestion des utilisateurs, validation des comptes professionnels
+- Cohérence des données inter-services actuellement gérée au niveau applicatif — une saga ou un pattern d'événements transactionnels (outbox) renforcerait la fiabilité sur les flux critiques
+- Pas encore d'observabilité centralisée (tracing distribué, dashboards de métriques) au-delà des logs de l'API Gateway
+- Alignement HL7/FHIR envisagé pour l'interopérabilité avec d'autres systèmes de santé, non encore implémenté
 
 ## Auteur
 
-**Abdoul Aziz NDOYE**
-Master II Génie Logiciel — Université Assane Seck de Ziguinchor, Sénégal
+**Abdoul Aziz Ndoye** — Développeur Fullstack
