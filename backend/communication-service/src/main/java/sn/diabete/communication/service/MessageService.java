@@ -16,6 +16,8 @@ import sn.diabete.communication.dto.*;
 import sn.diabete.communication.entity.*;
 import sn.diabete.communication.repository.ConversationRepository;
 import sn.diabete.communication.repository.MessageRepository;
+import sn.diabete.communication.repository.ConversationReadStateRepository;
+import sn.diabete.communication.entity.ConversationReadState;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,6 +33,7 @@ public class MessageService {
     private final PatientServiceClient patientServiceClient;
     private final MedecinServiceClient medecinServiceClient;
     private final NotificationPublisher notificationPublisher;
+    private final ConversationReadStateRepository readStateRepository;
 
     /**
      * Enregistrer un nouveau message
@@ -43,11 +46,21 @@ public class MessageService {
         Conversation conversation = conversationRepository.findById(request.getConversationId())
                 .orElseThrow(() -> new RuntimeException("Conversation non trouvée"));
 
+        SenderType senderType;
+        try {
+            senderType = SenderType.valueOf(request.getSenderType());
+        } catch (RuntimeException ex) {
+            throw new IllegalArgumentException("Type d'expéditeur invalide");
+        }
+        if (!isParticipant(conversation, request.getSenderId(), senderType)) {
+            throw new org.springframework.security.access.AccessDeniedException("Accès refusé à cette conversation");
+        }
+
         // Créer le message
         Message message = Message.builder()
                 .conversationId(request.getConversationId())
                 .senderId(request.getSenderId())
-                .senderType(SenderType.valueOf(request.getSenderType()))
+                .senderType(senderType)
                 .content(request.getContent())
                 .messageType(request.getMessageType())
                 .build();
@@ -65,6 +78,52 @@ public class MessageService {
         sendNotifications(conversation, messageDTO);
 
         return messageDTO;
+    }
+
+    private boolean isParticipant(Conversation conversation, Long senderId, SenderType senderType) {
+        if (senderType == SenderType.PATIENT) {
+            return conversation.getType() == ConversationType.PATIENT_EQUIPE
+                    && conversation.getPatientId().equals(senderId);
+        }
+        if (conversation.getType() == ConversationType.MEDECIN_MEDECIN) {
+            return senderId.equals(conversation.getMedecinId1()) || senderId.equals(conversation.getMedecinId2());
+        }
+        try {
+            return medecinServiceClient.canAccessPatient(senderId, conversation.getPatientId()).isCanAccess();
+        } catch (Exception ex) {
+            log.warn("Impossible de vérifier l'accès du médecin {} à la conversation {}", senderId, conversation.getId());
+            return false;
+        }
+    }
+
+    public boolean canAccessConversation(Long conversationId, Long actorId, SenderType actorType) {
+        Conversation conversation = conversationRepository.findById(conversationId).orElse(null);
+        return conversation != null && isParticipant(conversation, actorId, actorType);
+    }
+
+    public boolean canAccessFile(String filename, Long actorId, SenderType actorType) {
+        return messageRepository.findFirstByFileUrl("/api/messages/files/" + filename)
+                .map(message -> canAccessConversation(message.getConversationId(), actorId, actorType))
+                .orElse(false);
+    }
+
+    @Transactional
+    public void markConversationRead(Long conversationId, Long readerId, SenderType readerType) {
+        var state = readStateRepository.findByConversationIdAndReaderIdAndReaderType(conversationId, readerId, readerType)
+                .orElseGet(() -> ConversationReadState.builder().conversationId(conversationId)
+                        .readerId(readerId).readerType(readerType).build());
+        state.setLastReadAt(LocalDateTime.now());
+        readStateRepository.save(state);
+    }
+
+    public long getUnreadCount(Long conversationId, Long readerId, SenderType readerType) {
+        LocalDateTime lastReadAt = readStateRepository
+                .findByConversationIdAndReaderIdAndReaderType(conversationId, readerId, readerType)
+                .map(ConversationReadState::getLastReadAt).orElse(null);
+        if (lastReadAt == null) {
+            return messageRepository.countUnread(conversationId, readerId, readerType);
+        }
+        return messageRepository.countUnreadSince(conversationId, readerId, readerType, lastReadAt);
     }
 
     /**
@@ -93,10 +152,16 @@ public class MessageService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation non trouvée"));
 
+        SenderType parsedSenderType;
+        try { parsedSenderType = SenderType.valueOf(senderType); }
+        catch (RuntimeException ex) { throw new IllegalArgumentException("Type d'expéditeur invalide"); }
+        if (!isParticipant(conversation, senderId, parsedSenderType))
+            throw new org.springframework.security.access.AccessDeniedException("Accès refusé à cette conversation");
+
         Message message = Message.builder()
                 .conversationId(conversationId)
                 .senderId(senderId)
-                .senderType(SenderType.valueOf(senderType))
+                .senderType(parsedSenderType)
                 .content(content)
                 .messageType(MessageType.DOCUMENT)
                 .fileName(fileName)

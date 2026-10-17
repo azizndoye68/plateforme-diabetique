@@ -7,6 +7,7 @@ public enum TypeAlerte {
     HYPERGLYCEMIE_SEVERE("Hyperglycémie sévère"),
     INACTIVITE_PATIENT("Patient inactif"),
     RAPPEL_MESURE("Rappel de mesure"),
+    NOUVEAU_MESSAGE("Nouveau message"),
 
     // 🆕 Rendez-vous
     RENDEZ_VOUS_PLANIFIE("Rendez-vous planifié"),

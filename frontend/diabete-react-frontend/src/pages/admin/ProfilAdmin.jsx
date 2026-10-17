@@ -62,8 +62,8 @@ function ProfilAdmin() {
       setErrorMsg("Le nouveau mot de passe et sa confirmation ne correspondent pas.");
       return;
     }
-    if (passwordData.newPassword.length < 5) {
-      setErrorMsg("Le nouveau mot de passe doit contenir au moins 5 caractères.");
+    if (passwordData.newPassword.length < 12 || passwordData.newPassword.length > 72) {
+      setErrorMsg("Le nouveau mot de passe doit contenir entre 12 et 72 caractères.");
       return;
     }
 
@@ -73,9 +73,13 @@ function ProfilAdmin() {
         oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword,
       });
+      try { await api.post("/api/auth/logout"); } catch { /* La fermeture locale reste nécessaire si le serveur est indisponible. */ }
       setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
-      setSuccessMsg("Mot de passe mis à jour avec succès !");
-      setTimeout(() => setSuccessMsg(""), 4000);
+      setSuccessMsg("Mot de passe mis à jour. Reconnectez-vous avec votre nouveau mot de passe.");
+      setTimeout(() => {
+        ["token", "refreshToken", "utilisateurId", "role"].forEach((key) => localStorage.removeItem(key));
+        window.location.assign("/login");
+      }, 1200);
     } catch (err) {
       const msg = err?.response?.data?.message || "Ancien mot de passe incorrect.";
       setErrorMsg(msg);
@@ -91,10 +95,8 @@ function ProfilAdmin() {
 
   const getPasswordStrength = (pwd) => {
     if (!pwd) return null;
-    if (pwd.length < 5)  return { level: "Faible",    color: "#ef4444", width: "25%"  };
-    if (pwd.length < 8)  return { level: "Moyen",     color: "#f59e0b", width: "55%"  };
-    if (pwd.length < 12) return { level: "Fort",      color: "#10b981", width: "80%"  };
-    return                      { level: "Très fort", color: "#11998e", width: "100%" };
+    if (pwd.length < 12) return { level: "À renforcer", color: "#ef4444", width: "35%" };
+    return { level: "Longueur conforme", color: "#11998e", width: "100%" };
   };
 
   const strength = getPasswordStrength(passwordData.newPassword);
@@ -318,7 +320,8 @@ function ProfilAdmin() {
                             value={passwordData.newPassword}
                             onChange={handlePasswordChange}
                             className="pa-input"
-                            placeholder="Minimum 5 caractères"
+                            placeholder="12 caractères minimum"
+                            maxLength={72}
                           />
                           <button type="button" className="pa-pwd-toggle" onClick={() => toggleShow("new")}>
                             <i className={`bi bi-eye${showPassword.new ? "-slash" : ""}`}></i>
@@ -349,6 +352,7 @@ function ProfilAdmin() {
                             type={showPassword.confirm ? "text" : "password"}
                             name="confirmPassword"
                             value={passwordData.confirmPassword}
+                            maxLength={72}
                             onChange={handlePasswordChange}
                             className={`pa-input${
                               passwordData.confirmPassword
@@ -379,7 +383,7 @@ function ProfilAdmin() {
 
                   <div className="pa-security-tip mt-3">
                     <i className="bi bi-lightbulb-fill me-2"></i>
-                    Utilisez au moins 8 caractères, mélangez lettres, chiffres et symboles pour un mot de passe sécurisé.
+                    Utilisez entre 12 et 72 caractères pour votre nouveau mot de passe.
                   </div>
 
                   <div className="pa-card__actions mt-4">

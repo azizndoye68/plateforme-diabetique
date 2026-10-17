@@ -16,6 +16,11 @@ import sn.diabete.communication.dto.ChatMessageRequest;
 import sn.diabete.communication.dto.MessageDTO;
 import sn.diabete.communication.service.FileStorageService;
 import sn.diabete.communication.service.MessageService;
+import sn.diabete.communication.service.ChatActorService;
+import sn.diabete.communication.security.ChatPrincipal;
+import sn.diabete.communication.entity.SenderType;
+import sn.diabete.communication.repository.ConversationRepository;
+import sn.diabete.communication.service.ChatWebSocketService;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -30,6 +35,9 @@ public class MessageController {
     private final MessageService messageService;
     private final FileStorageService fileStorageService;
     private final FileStorageConfig fileStorageConfig;
+    private final ChatActorService chatActorService;
+    private final ConversationRepository conversationRepository;
+    private final ChatWebSocketService chatWebSocketService;
 
     /**
      * Récupérer messages d'une conversation (paginé)
@@ -38,11 +46,26 @@ public class MessageController {
     public ResponseEntity<Page<MessageDTO>> getConversationMessages(
             @PathVariable Long conversationId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size
+            @RequestParam(defaultValue = "50") int size,
+            java.security.Principal principal
     ) {
+        var actor = chatActorService.resolve(principal);
+        if (!messageService.canAccessConversation(conversationId, actor.profileId(), actor.type()))
+            return ResponseEntity.notFound().build();
+        if (page < 0 || size < 1 || size > 100) return ResponseEntity.badRequest().build();
         log.info("GET /api/messages/conversation/{} - page {}", conversationId, page);
         Page<MessageDTO> messages = messageService.getConversationMessages(conversationId, page, size);
+        messageService.markConversationRead(conversationId, actor.profileId(), actor.type());
         return ResponseEntity.ok(messages);
+    }
+
+    @PostMapping("/conversation/{conversationId}/read")
+    public ResponseEntity<Void> markConversationRead(@PathVariable Long conversationId, java.security.Principal principal) {
+        var actor = chatActorService.resolve(principal);
+        if (!messageService.canAccessConversation(conversationId, actor.profileId(), actor.type()))
+            return ResponseEntity.notFound().build();
+        messageService.markConversationRead(conversationId, actor.profileId(), actor.type());
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -50,10 +73,14 @@ public class MessageController {
      */
     @PostMapping
     public ResponseEntity<MessageDTO> sendMessage(
-            @Valid @RequestBody ChatMessageRequest request
+            @Valid @RequestBody ChatMessageRequest request, java.security.Principal principal
     ) {
+        var actor = chatActorService.resolve(principal);
+        request.setSenderId(actor.profileId());
+        request.setSenderType(actor.type().name());
         log.info("POST /api/messages - conversation {}", request.getConversationId());
         MessageDTO message = messageService.saveMessage(request);
+        conversationRepository.findById(request.getConversationId()).ifPresent(c -> chatWebSocketService.publishToParticipants(c, message));
         return ResponseEntity.ok(message);
     }
     /**
@@ -68,9 +95,14 @@ public class MessageController {
             @RequestParam("conversationId") Long conversationId,
             @RequestParam("senderId") Long senderId,
             @RequestParam("senderType") String senderType,
-            @RequestParam(value = "content", defaultValue = "") String content
+            @RequestParam(value = "content", defaultValue = "") String content,
+            java.security.Principal principal
     ) {
         log.info("POST /api/messages/upload - conversation {}", conversationId);
+
+        var actor = chatActorService.resolve(principal);
+        if (!messageService.canAccessConversation(conversationId, actor.profileId(), actor.type()))
+            throw new org.springframework.security.access.AccessDeniedException("Accès refusé à cette conversation");
 
         try {
             // Sauvegarder fichier
@@ -80,8 +112,8 @@ public class MessageController {
             // Créer message
             MessageDTO message = messageService.saveMessageWithFile(
                     conversationId,
-                    senderId,
-                    senderType,
+                    actor.profileId(),
+                    actor.type().name(),
                     content.isEmpty()
                             ? "Fichier joint : " + file.getOriginalFilename()
                             : content,
@@ -89,6 +121,7 @@ public class MessageController {
                     fileUrl,
                     file.getSize()
             );
+            conversationRepository.findById(conversationId).ifPresent(c -> chatWebSocketService.publishToParticipants(c, message));
 
             return ResponseEntity.ok(message);
 
@@ -102,9 +135,14 @@ public class MessageController {
      * Télécharger fichier
      */
     @GetMapping("/files/{filename}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable String filename, java.security.Principal principal) {
         try {
-            Path filePath = Paths.get(fileStorageConfig.getUploadDir()).resolve(filename);
+            if (filename.contains("/") || filename.contains("\\") || filename.contains("..")) return ResponseEntity.badRequest().build();
+            var actor = chatActorService.resolve(principal);
+            if (!messageService.canAccessFile(filename, actor.profileId(), actor.type())) return ResponseEntity.notFound().build();
+            Path basePath = Paths.get(fileStorageConfig.getUploadDir()).toAbsolutePath().normalize();
+            Path filePath = basePath.resolve(filename).normalize();
+            if (!filePath.startsWith(basePath)) return ResponseEntity.badRequest().build();
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists()) {

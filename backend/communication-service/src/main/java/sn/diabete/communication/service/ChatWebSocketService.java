@@ -6,6 +6,11 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import sn.diabete.communication.dto.MessageDTO;
 import sn.diabete.communication.entity.SenderType;
+import sn.diabete.communication.entity.Conversation;
+import sn.diabete.communication.entity.ConversationType;
+import sn.diabete.communication.client.MedecinServiceClient;
+import sn.diabete.communication.dto.EquipeMedicaleDTO;
+import sn.diabete.communication.dto.MembreEquipeDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -13,6 +18,29 @@ import sn.diabete.communication.entity.SenderType;
 public class ChatWebSocketService {
 
     private final SimpMessagingTemplate messagingTemplate;
+    private final MedecinServiceClient medecinServiceClient;
+
+    public void publishToParticipants(Conversation conversation, MessageDTO message) {
+        if (conversation.getType() == ConversationType.PATIENT_EQUIPE) {
+            if (message.getSenderType() == SenderType.PATIENT) {
+                EquipeMedicaleDTO equipe = medecinServiceClient.getEquipeMedicale(conversation.getMedecinReferentId());
+                if (equipe.getProprietaireId() != null) sendToMedecin(equipe.getProprietaireId(), message);
+                if (equipe.getMembres() != null) equipe.getMembres().forEach(m -> sendToMedecin(m.getId(), message));
+            } else {
+                sendToPatient(conversation.getPatientId(), message);
+                EquipeMedicaleDTO equipe = medecinServiceClient.getEquipeMedicale(conversation.getMedecinReferentId());
+                if (equipe.getMembres() != null) equipe.getMembres().stream()
+                        .map(MembreEquipeDTO::getId).filter(id -> !id.equals(message.getSenderId()))
+                        .forEach(id -> sendToMedecin(id, message));
+                if (equipe.getProprietaireId() != null && !equipe.getProprietaireId().equals(message.getSenderId()))
+                    sendToMedecin(equipe.getProprietaireId(), message);
+            }
+        } else {
+            Long recipient = conversation.getMedecinId1().equals(message.getSenderId())
+                    ? conversation.getMedecinId2() : conversation.getMedecinId1();
+            sendToMedecin(recipient, message);
+        }
+    }
 
     /**
      * Envoyer message WebSocket à un patient

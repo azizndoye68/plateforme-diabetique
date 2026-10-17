@@ -36,6 +36,10 @@ public class EquipeMedicaleService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Médecin introuvable id=" + medecinId));
 
+        if (!equipeRepository.findByMedecinProprietaireId(medecinId).isEmpty()) {
+            throw new IllegalStateException("Ce médecin possède déjà une équipe médicale");
+        }
+
         EquipeMedicale equipe = new EquipeMedicale();
         equipe.setNom(request.getNom().trim());
         equipe.setMedecinProprietaire(proprietaire);
@@ -60,6 +64,10 @@ public class EquipeMedicaleService {
         Medecin medecin = medecinRepository.findById(medecinAajouterId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Médecin introuvable id=" + medecinAajouterId));
+
+        if (medecin.getId().equals(equipe.getMedecinProprietaire().getId())) {
+            throw new IllegalArgumentException("Le propriétaire est déjà membre de son équipe");
+        }
 
         if (equipe.getMedecins().stream().noneMatch(m -> m.getId().equals(medecin.getId()))) {
             equipe.getMedecins().add(medecin);

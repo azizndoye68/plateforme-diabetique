@@ -155,10 +155,13 @@ public class MedecinService {
         // Récupérer l'équipe dont le médecin est propriétaire
         List<EquipeMedicale> equipesCreees = equipeRepository.findByMedecinProprietaireId(medecinId);
 
+        // Un médecin peut suivre seul ses patients. Dans ce cas, il reste
+        // l'unique destinataire de la conversation patient-équipe.
         if (equipesCreees.isEmpty()) {
-            throw new ResourceNotFoundException(
-                    "Ce médecin n'a pas d'équipe médicale. ID médecin : " + medecinId
-            );
+            return EquipeMedicaleDTO.builder()
+                    .proprietaireId(medecin.getId())
+                    .membres(List.of())
+                    .build();
         }
 
         // Prendre la première équipe (un médecin ne devrait avoir qu'une équipe en tant que propriétaire)
@@ -203,15 +206,9 @@ public class MedecinService {
                 if (medecinReferent != null) {
                     // Chercher l'équipe du médecin référent
                     List<EquipeMedicale> equipesReferent = equipeRepository.findByMedecinProprietaireId(
-                            patient.getMedecinId()
-                    );
-
-                    if (!equipesReferent.isEmpty()) {
-                        EquipeMedicale equipe = equipesReferent.get(0);
-                        // Vérifier si le médecin fait partie de cette équipe
-                        return equipe.getMedecins().stream()
-                                .anyMatch(m -> m.getId().equals(medecinId));
-                    }
+                            patient.getMedecinId());
+                    return equipesReferent.stream().anyMatch(equipe -> equipe.getMedecins().stream()
+                            .anyMatch(m -> m.getId().equals(medecinId)));
                 }
             }
 

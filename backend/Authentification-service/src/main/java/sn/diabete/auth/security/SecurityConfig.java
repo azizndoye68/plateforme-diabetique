@@ -26,7 +26,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session ->
@@ -37,17 +36,14 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/login",
                                 "/api/auth/refresh-token",   // NOUVEAU
-                                "/api/auth/validate-token",
                                 "/api/auth/users/*/email",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/h2-console/**"
+                                "/swagger-ui.html"
                         ).permitAll()
                         // ── Admin uniquement (double protection : route + @PreAuthorize) ──
                         .requestMatchers(
-                                "/api/auth/users",
-                                "/api/auth/users/pending/all",
+                                "/api/auth/users/**",
                                 "/api/auth/approve/**",
                                 "/api/auth/reject/**"
                         ).hasRole("ADMIN")

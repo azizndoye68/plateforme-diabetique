@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Image } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
+import api from "../services/api";
 import defaultAvatar from "../images/default-avatar.jpg";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./SidebarAdmin.css";
@@ -19,26 +20,36 @@ function SidebarAdmin({ admin, onShowAide }) {
   const navigate  = useNavigate();
   const location  = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => setCollapsed(window.innerWidth < 992);
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setCollapsed(!mobile && window.innerWidth < 992);
+      if (!mobile) setMobileOpen(false);
+    };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+  const handleLogout = async () => {
+    try { await api.post("/api/auth/logout"); } catch { /* Terminer la session locale même si le serveur est indisponible. */ }
+    ["token", "refreshToken", "utilisateurId", "role"].forEach((key) => localStorage.removeItem(key));
+    navigate("/login", { replace: true });
   };
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className={`sa-sidebar ${collapsed ? "sa-collapsed" : ""}`}>
+    <>
+    {isMobile && mobileOpen && <button type="button" className="sa-sidebar-backdrop" aria-label="Fermer le menu" onClick={() => setMobileOpen(false)} />}
+    <div className={`sa-sidebar ${collapsed ? "sa-collapsed" : ""} ${isMobile ? "sa-mobile" : ""} ${mobileOpen ? "sa-mobile-open" : ""}`}>
 
       {/* ── Logo ── */}
-      <div className="sa-logo" onClick={() => navigate("/dashboard-admin")}>
+      <div className="sa-logo" onClick={() => { navigate("/dashboard-admin"); setMobileOpen(false); }}>
         <div className="sa-logo-icon">
           <Image src={require("../images/logo-diabete.png")} alt="Logo" width="36" height="36" />
         </div>
@@ -83,7 +94,7 @@ function SidebarAdmin({ admin, onShowAide }) {
             <li
               key={item.path}
               className={`sa-item ${isActive(item.path) ? "sa-item--active" : ""}`}
-              onClick={() => navigate(item.path)}
+              onClick={() => { navigate(item.path); setMobileOpen(false); }}
               title={collapsed ? item.label : ""}
             >
               <i className={`bi ${item.icon} sa-icon`}></i>
@@ -116,6 +127,8 @@ function SidebarAdmin({ admin, onShowAide }) {
         </div>
       </div>
     </div>
+    {isMobile && <button type="button" className="sa-mobile-menu-button" aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={mobileOpen} onClick={() => setMobileOpen((open) => !open)}><i className={`bi ${mobileOpen ? "bi-x-lg" : "bi-list"}`} /></button>}
+    </>
   );
 }
 

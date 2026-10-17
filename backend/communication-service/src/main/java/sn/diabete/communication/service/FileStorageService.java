@@ -38,8 +38,10 @@ public class FileStorageService {
             String newFilename = UUID.randomUUID().toString() + "." + extension;
 
             // Chemin de sauvegarde
-            Path uploadPath = Paths.get(fileStorageConfig.getUploadDir());
-            Path filePath = uploadPath.resolve(newFilename);
+            Path uploadPath = Paths.get(fileStorageConfig.getUploadDir()).toAbsolutePath().normalize();
+            Files.createDirectories(uploadPath);
+            Path filePath = uploadPath.resolve(newFilename).normalize();
+            if (!filePath.startsWith(uploadPath)) throw new IllegalArgumentException("Chemin de fichier invalide");
 
             // Sauvegarder
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
@@ -76,6 +78,15 @@ public class FileStorageService {
 
         if (!isAllowed) {
             throw new RuntimeException("Type de fichier non autorisé");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType != null && !(contentType.equals("application/pdf")
+                || contentType.startsWith("image/")
+                || contentType.equals("application/msword")
+                || contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                || contentType.equals("application/octet-stream"))) {
+            throw new RuntimeException("Type de contenu non autorisé");
         }
     }
 

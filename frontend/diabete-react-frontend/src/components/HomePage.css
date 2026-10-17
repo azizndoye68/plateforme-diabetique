@@ -19,14 +19,7 @@
 }
 
 /* ==================== */
-/* RESET BOOTSTRAP */
-/* ==================== */
-.btn:focus,
-.btn:active,
-.btn:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
+/* Les contrôles gardent l'indicateur de focus clavier défini globalement. */
 
 /* ==================== */
 /* TOP BAR */

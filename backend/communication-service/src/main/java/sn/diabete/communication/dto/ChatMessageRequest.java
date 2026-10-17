@@ -17,10 +17,8 @@ public class ChatMessageRequest {
     @NotBlank(message = "Le contenu du message est obligatoire")
     private String content;
 
-    @NotNull(message = "L'ID de l'expéditeur est obligatoire")
     private Long senderId;
 
-    @NotNull(message = "Le type d'expéditeur est obligatoire")
     private String senderType; // PATIENT ou MEDECIN
 
     private MessageType messageType = MessageType.TEXT;

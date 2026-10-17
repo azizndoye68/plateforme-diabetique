@@ -20,8 +20,8 @@ public class NotificationPublisher {
     public void publishNotification(NotificationMessageDTO notification) {
         try {
             rabbitTemplate.convertAndSend(
-                    RabbitMQConfig.NOTIFICATION_EXCHANGE,
-                    RabbitMQConfig.NOTIFICATION_ROUTING_KEY,
+                    RabbitMQConfig.CHAT_NOTIFICATION_EXCHANGE,
+                    RabbitMQConfig.CHAT_NOTIFICATION_ROUTING_KEY,
                     notification
             );
             log.info("Notification publiée pour {} destinataires",

@@ -40,10 +40,12 @@ import NotificationsPage from './pages/patient/NotificationsPage';
 import NotificationsMedecinPage from './pages/medecin/NotificationsMedecinPage';
 import RappelsGlycemiePage from './pages/patient/RappelsGlycemiePage';
 import ProfilAdmin from './pages/admin/ProfilAdmin';
+import PwaInstallPrompt from './components/PwaInstallPrompt';
 
 function App() {
   return (
     <Router>
+      <PwaInstallPrompt />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />

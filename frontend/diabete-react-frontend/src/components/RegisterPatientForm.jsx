@@ -9,6 +9,7 @@ function RegisterPatientForm() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [utilisateurId, setUtilisateurId] = useState(null);
   const [formData, setFormData] = useState({
     username: '', email: '', password: '', confirmPassword: '',
     role: 'PATIENT', prenom: '', nom: '', telephone: '',
@@ -29,7 +30,7 @@ function RegisterPatientForm() {
     if (!formData.email.trim()) newErrors.email = "Email obligatoire";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Format email invalide";
     if (!formData.password) newErrors.password = "Mot de passe obligatoire";
-    else if (formData.password.length < 5) newErrors.password = "Au moins 5 caractères";
+    else if (formData.password.length < 12 || formData.password.length > 72) newErrors.password = "Entre 12 et 72 caractères";
     if (!formData.confirmPassword) newErrors.confirmPassword = "Confirmation obligatoire";
     else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
     setErrors(newErrors);
@@ -78,14 +79,21 @@ function RegisterPatientForm() {
   const handleFinalSubmit = async () => {
     if (!validateStep3()) { setMessage('error'); return; }
     setLoading(true); setMessage('');
+    let accountCreated = Boolean(utilisateurId);
     try {
-      const authResponse = await api.post('/api/auth/register', {
-        username: formData.username, email: formData.email,
-        password: formData.password, role: formData.role,
-      });
-      const utilisateurId = authResponse.data.id;
+      let accountId = utilisateurId;
+      if (!accountId) {
+        const authResponse = await api.post('/api/auth/register', {
+          username: formData.username.trim(), email: formData.email.trim().toLowerCase(),
+          password: formData.password, role: formData.role,
+        });
+        accountId = authResponse.data.id;
+        if (!accountId) throw new Error("Le serveur n'a pas retourné l'identifiant du compte.");
+        setUtilisateurId(accountId);
+        accountCreated = true;
+      }
       await api.post('/api/patients', {
-        utilisateurId, prenom: formData.prenom, nom: formData.nom,
+        utilisateurId: accountId, prenom: formData.prenom, nom: formData.nom,
         telephone: formData.telephone, dateNaissance: formData.dateNaissance,
         sexe: formData.sexe, typeDiabete: formData.typeDiabete,
         adresse: formData.adresse || null, ville: formData.ville || null,
@@ -94,7 +102,12 @@ function RegisterPatientForm() {
       });
       setStep(4);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Erreur lors de l'inscription");
+      const detail = typeof error.response?.data === 'string'
+        ? error.response.data
+        : error.response?.data?.error || error.response?.data?.message;
+      setMessage(accountCreated
+        ? `Votre compte est créé, mais le profil patient n'a pas pu être enregistré. Réessayez sans recréer votre compte. ${detail || ''}`
+        : detail || error.message || "Erreur lors de l'inscription");
     } finally { setLoading(false); }
   };
 
@@ -191,7 +204,7 @@ function RegisterPatientForm() {
                       <Form.Label>Mot de passe <span className="med-req">*</span></Form.Label>
                       <div className="med-field-wrap">
                         <FaLock className="med-field-icon" />
-                        <Form.Control type="password" name="password" placeholder="••••••" value={formData.password} onChange={handleChange} isInvalid={!!errors.password} className="med-input" />
+                        <Form.Control type="password" name="password" placeholder="12 caractères minimum" value={formData.password} maxLength={72} onChange={handleChange} isInvalid={!!errors.password} className="med-input" />
                       </div>
                       <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                     </Form.Group>
@@ -201,7 +214,7 @@ function RegisterPatientForm() {
                       <Form.Label>Confirmation <span className="med-req">*</span></Form.Label>
                       <div className="med-field-wrap">
                         <FaLock className="med-field-icon" />
-                        <Form.Control type="password" name="confirmPassword" placeholder="••••••" value={formData.confirmPassword} onChange={handleChange} isInvalid={!!errors.confirmPassword} className="med-input" />
+                        <Form.Control type="password" name="confirmPassword" placeholder="Confirmez le mot de passe" value={formData.confirmPassword} maxLength={72} onChange={handleChange} isInvalid={!!errors.confirmPassword} className="med-input" />
                       </div>
                       <Form.Control.Feedback type="invalid">{errors.confirmPassword}</Form.Control.Feedback>
                     </Form.Group>
@@ -342,7 +355,7 @@ function RegisterPatientForm() {
                 <div className="med-footer">
                   <Button className="med-btn-back" onClick={() => setStep(2)}><FaArrowLeft /> Retour</Button>
                   <Button type="submit" className="med-btn-primary" disabled={loading}>
-                    {loading ? <><Spinner animation="border" size="sm" /> Inscription...</> : <>S'inscrire <FaCheckCircle /></>}
+                    {loading ? <><Spinner animation="border" size="sm" /> Inscription...</> : <>{utilisateurId ? 'Réessayer la création du profil' : "S'inscrire"} <FaCheckCircle /></>}
                   </Button>
                 </div>
               </Form>
@@ -358,7 +371,7 @@ function RegisterPatientForm() {
                 </div>
                 <h3 className="med-success-title">Bienvenue !</h3>
                 <p className="med-success-msg">
-                  Votre compte patient a été créé avec succès. Vous pouvez maintenant vous connecter et commencer votre suivi.
+                  Votre compte patient et votre profil ont été créés. Vous pouvez maintenant vous connecter et commencer votre suivi.
                 </p>
                 <ul className="med-success-list">
                   <li>Connectez-vous avec vos identifiants</li>

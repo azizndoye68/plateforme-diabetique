@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
+import { API_BASE_URL } from "../../services/api";
+import { Client } from "@stomp/stompjs";
 import SidebarPatient from "../../components/SidebarPatient";
 import AideModal from "../../components/AideModal";
 import "./ChatPatient.css";
@@ -38,39 +40,34 @@ function ChatPatient() {
       conversationRef.current &&
       newMessage.conversationId === conversationRef.current.id
     ) {
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev) => prev.some((message) => message.id === newMessage.id) ? prev : [...prev, newMessage]);
+      api.post(`/api/messages/conversation/${newMessage.conversationId}/read`).catch(() => {});
     }
   }, []);
 
   const stopTyping = useCallback(() => {
     const p = patientRef.current;
     const c = conversationRef.current;
-    if (!c || !stompClientRef.current) return;
-    stompClientRef.current.send(
-      "/app/chat.typing",
-      {},
-      JSON.stringify({
+    if (!c || !stompClientRef.current?.connected) return;
+    stompClientRef.current.publish({
+      destination: "/app/chat.typing",
+      body: JSON.stringify({
         conversationId: c.id,
         userId: p.id,
         userName: p.prenom,
         typing: false,
       }),
-    );
+    });
   }, []);
 
   const connectWebSocket = useCallback(
     (patientData) => {
       if (!patientData) return;
-      const initWebSocket = () => {
-        if (!window.SockJS || !window.Stomp) {
-          setTimeout(initWebSocket, 100);
-          return;
-        }
-        const socket = new WebSocket("ws://localhost:8080/ws");
-        const client = window.Stomp.over(socket);
-        client.connect(
-          {},
-          () => {
+      const client = new Client({
+        brokerURL: `${API_BASE_URL.replace(/^http/, "ws")}/ws`,
+        connectHeaders: { Authorization: `Bearer ${localStorage.getItem("token") || ""}` },
+        reconnectDelay: 3000,
+        onConnect: () => {
             setIsConnected(true);
             client.subscribe(
               `/topic/patient/${patientData.id}/messages`,
@@ -78,15 +75,17 @@ function ChatPatient() {
                 handleNewMessage(JSON.parse(message.body));
               },
             );
+            client.subscribe("/user/queue/acks", (frame) => handleNewMessage(JSON.parse(frame.body)));
+            client.subscribe("/user/queue/errors", (frame) => window.alert(frame.body));
             stompClientRef.current = client;
           },
-          () => {
+        onWebSocketClose: () => {
             setIsConnected(false);
-            setTimeout(() => connectWebSocket(patientData), 3000);
           },
-        );
-      };
-      initWebSocket();
+        onStompError: () => setIsConnected(false),
+      });
+      stompClientRef.current = client;
+      client.activate();
     },
     [handleNewMessage],
   );
@@ -146,7 +145,7 @@ function ChatPatient() {
     fetchPatient();
 
     return () => {
-      if (stompClientRef.current) stompClientRef.current.disconnect();
+      if (stompClientRef.current) stompClientRef.current.deactivate();
     };
   }, [navigate, connectWebSocket, loadConversation]);
 
@@ -166,42 +165,63 @@ function ChatPatient() {
     const p = patientRef.current;
     const c = conversationRef.current;
     if (!c || !stompClientRef.current) return;
-    stompClientRef.current.send(
-      "/app/chat.typing",
-      {},
-      JSON.stringify({
+    stompClientRef.current.publish({
+      destination: "/app/chat.typing",
+      body: JSON.stringify({
         conversationId: c.id,
         userId: p.id,
         userName: p.prenom,
         typing: true,
       }),
-    );
+    });
     clearTimeout(typingTimeoutRef.current);
     typingTimeoutRef.current = setTimeout(stopTyping, 2000);
   };
 
-  const sendMessage = () => {
-    if (!messageInput.trim() || !conversation || !stompClientRef.current)
-      return;
+  const sendMessage = async () => {
+    if (!messageInput.trim()) return;
+    const currentPatient = patientRef.current;
+    let activeConversation = conversationRef.current;
+    if (!currentPatient) return;
+    if (!activeConversation) {
+      try {
+        const response = await api.post(`/api/conversations/patient/${currentPatient.id}`);
+        activeConversation = response.data;
+        conversationRef.current = activeConversation;
+        setConversation(activeConversation);
+      } catch (error) {
+        console.error("Échec de création/récupération de la conversation patient:", error);
+        const responseData = error.response?.data;
+        const serverMessage = typeof responseData === "string"
+          ? responseData
+          : responseData?.message || responseData?.error;
+        const reason = serverMessage
+          || (error.response?.status === 401 ? "Votre session a expiré. Reconnectez-vous." : null)
+          || (error.response?.status === 403 ? "Votre compte n’a pas accès à cette conversation." : null)
+          || (error.response?.status ? `Le serveur a répondu avec le code ${error.response.status}.` : "Le service de communication est inaccessible.");
+        window.alert(`Impossible d’ouvrir la conversation : ${reason}`);
+        return;
+      }
+    }
     const message = {
-      conversationId: conversation.id,
-      senderId: patient.id,
+      conversationId: activeConversation.id,
+      senderId: currentPatient.id,
       senderType: "PATIENT",
       content: messageInput,
       messageType: "TEXT",
     };
-    stompClientRef.current.send("/app/chat.send", {}, JSON.stringify(message));
-    setMessages((prev) => [
-      ...prev,
-      {
-        ...message,
-        id: Date.now(),
-        senderName: `${patient.prenom} ${patient.nom}`,
-        createdAt: new Date().toISOString(),
-      },
-    ]);
-    setMessageInput("");
-    stopTyping();
+    try {
+      if (stompClientRef.current?.connected) {
+        stompClientRef.current.publish({ destination: "/app/chat.send", body: JSON.stringify(message) });
+      } else {
+        const response = await api.post("/api/messages", message);
+        handleNewMessage(response.data);
+      }
+      setMessageInput("");
+      stopTyping();
+    } catch (error) {
+      window.alert(error.response?.data?.message || "Le message n’a pas pu être envoyé.");
+    }
   };
 
   const handleFileUpload = async (e) => {
@@ -215,14 +235,29 @@ function ChatPatient() {
     formData.append("senderType", "PATIENT");
     formData.append("content", `Fichier partagé: ${file.name}`);
     try {
-      await api.post("/api/messages/upload", formData, {
+      const response = await api.post("/api/messages/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      handleNewMessage(response.data);
     } catch (error) {
       console.error("Erreur upload:", error);
     } finally {
       setUploadingFile(false);
       e.target.value = "";
+    }
+  };
+
+  const downloadFile = async (url, filename) => {
+    try {
+      const response = await api.get(url, { responseType: "blob" });
+      const objectUrl = URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = filename || "piece-jointe";
+      link.click();
+      URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+      window.alert("Téléchargement impossible. Vérifiez votre accès à la conversation.");
     }
   };
 
@@ -340,8 +375,8 @@ function ChatPatient() {
                             </div>
                           </div>
                           <a
-                            href={`http://localhost:8080${msg.fileUrl}`}
-                            download
+                            href={msg.fileUrl}
+                            onClick={(event) => { event.preventDefault(); downloadFile(msg.fileUrl, msg.fileName); }}
                             className="cp-file-download"
                           >
                             <i className="bi bi-download"></i>
@@ -421,7 +456,7 @@ function ChatPatient() {
                   type="submit"
                   className="cp-send-btn"
                   disabled={
-                    !messageInput.trim() || !conversation || !isConnected
+                    !messageInput.trim()
                   }
                 >
                   <i className="bi bi-send-fill"></i>

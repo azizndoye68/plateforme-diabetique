@@ -30,25 +30,34 @@ public class ConversationService {
     public Conversation getOrCreatePatientConversation(Long patientId) {
         log.info("Récupération/création conversation pour patient {}", patientId);
 
-        List<Conversation> existing = conversationRepository
-                .findByPatientIdAndType(patientId, ConversationType.PATIENT_EQUIPE);
-
-        if (!existing.isEmpty()) {
-            if (existing.size() > 1) {
-                log.warn("⚠️ {} doublons détectés pour patient {}, nettoyage...",
-                        existing.size(), patientId);
-                existing.sort(Comparator.comparing(Conversation::getId));
-                List<Conversation> toDelete = existing.subList(1, existing.size());
-                conversationRepository.deleteAll(toDelete);
-                conversationRepository.flush();
-            }
-            return existing.get(0);
+        PatientInfoDTO patient = patientServiceClient.getPatientById(patientId);
+        if (patient.getMedecinId() == null) {
+            throw new IllegalStateException("Le patient doit être rattaché à un médecin avant d'ouvrir la messagerie");
         }
 
-        PatientInfoDTO patient = patientServiceClient.getPatientById(patientId);
+        List<Conversation> existing = conversationRepository
+                .findByPatientIdAndTypeAndStatus(patientId, ConversationType.PATIENT_EQUIPE,
+                        ConversationStatus.ACTIVE);
 
-        if (patient.getMedecinId() == null) {
-            throw new RuntimeException("Patient sans médecin référent");
+        if (!existing.isEmpty()) {
+            existing.sort(Comparator.comparing(Conversation::getId));
+            List<Conversation> toClose = existing.stream()
+                    .filter(c -> !patient.getMedecinId().equals(c.getMedecinReferentId()))
+                    .toList();
+            toClose.forEach(c -> c.setStatus(ConversationStatus.CLOSED));
+            if (!toClose.isEmpty()) conversationRepository.saveAll(toClose);
+
+            List<Conversation> matching = existing.stream()
+                    .filter(c -> patient.getMedecinId().equals(c.getMedecinReferentId()))
+                    .toList();
+            if (matching.size() > 1) {
+                log.warn("{} conversations actives existent pour le patient {}. Fermeture des doublons sans supprimer l'historique.",
+                        matching.size(), patientId);
+                List<Conversation> duplicates = matching.subList(1, matching.size());
+                duplicates.forEach(c -> c.setStatus(ConversationStatus.CLOSED));
+                conversationRepository.saveAll(duplicates);
+            }
+            if (!matching.isEmpty()) return matching.get(0);
         }
 
         Conversation conversation = Conversation.builder()
@@ -64,6 +73,14 @@ public class ConversationService {
     @Transactional
     public Conversation getOrCreateMedecinConversation(Long medecinId1, Long medecinId2) {
         log.info("Récupération/création conversation entre médecins {} et {}", medecinId1, medecinId2);
+
+        if (medecinId1 == null || medecinId2 == null || medecinId1.equals(medecinId2)) {
+            throw new IllegalArgumentException("Deux médecins distincts sont nécessaires");
+        }
+        if (!Boolean.TRUE.equals(medecinServiceClient.medecinExists(medecinId1))
+                || !Boolean.TRUE.equals(medecinServiceClient.medecinExists(medecinId2))) {
+            throw new IllegalArgumentException("Médecin introuvable");
+        }
 
         return conversationRepository
                 .findConversationBetweenMedecins(medecinId1, medecinId2, ConversationType.MEDECIN_MEDECIN)
@@ -94,12 +111,18 @@ public class ConversationService {
 
         List<ConversationDTO> allConversations = new ArrayList<>();
 
-        List<Conversation> patientConversations = conversationRepository
-                .findByMedecinReferentIdAndTypeAndStatus(
-                        medecinId,
-                        ConversationType.PATIENT_EQUIPE,
-                        ConversationStatus.ACTIVE
-                );
+        List<Long> visiblePatientIds;
+        try {
+            visiblePatientIds = patientServiceClient.getPatientsVisiblesPourMedecin(medecinId).stream()
+                    .map(PatientInfoDTO::getId).filter(java.util.Objects::nonNull).distinct().toList();
+        } catch (Exception e) {
+            log.error("Impossible de charger les patients visibles du médecin {}", medecinId, e);
+            throw new IllegalStateException("Le service patient ne répond pas; impossible de charger les conversations", e);
+        }
+        List<Conversation> patientConversations = visiblePatientIds.isEmpty()
+                ? List.of()
+                : conversationRepository.findByPatientIdInAndTypeAndStatus(
+                        visiblePatientIds, ConversationType.PATIENT_EQUIPE, ConversationStatus.ACTIVE);
 
         allConversations.addAll(
                 patientConversations.stream()
@@ -119,6 +142,23 @@ public class ConversationService {
         return allConversations;
     }
 
+    @Transactional
+    public Conversation getOrCreatePatientConversationForMedecin(Long patientId, Long medecinId) {
+        if (!canMedecinAccessPatient(medecinId, patientId)) {
+            throw new org.springframework.security.access.AccessDeniedException("Ce patient n'est pas dans votre équipe");
+        }
+        return getOrCreatePatientConversation(patientId);
+    }
+
+    private boolean canMedecinAccessPatient(Long medecinId, Long patientId) {
+        try {
+            return medecinServiceClient.canAccessPatient(medecinId, patientId).isCanAccess();
+        } catch (Exception e) {
+            log.error("Erreur vérification accès médecin {} au patient {}", medecinId, patientId, e);
+            return false;
+        }
+    }
+
     public ConversationDTO getConversationById(Long conversationId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation non trouvée"));
@@ -133,7 +173,7 @@ public class ConversationService {
 
         if (conversation.getType() == ConversationType.PATIENT_EQUIPE) {
             try {
-                return medecinServiceClient.canAccessPatient(medecinId, conversation.getPatientId());
+                return medecinServiceClient.canAccessPatient(medecinId, conversation.getPatientId()).isCanAccess();
             } catch (Exception e) {
                 log.error("Erreur vérification accès médecin", e);
                 return false;

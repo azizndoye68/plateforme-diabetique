@@ -42,8 +42,7 @@ class JwtTokenProviderTest {
 
     // ── Constantes de test ─────────────────────────────────────────
     private static final String SECRET =
-            "MySuperSecretKeyForJwtTokenMySuperSecretKeyForJwtToken" +
-                    "MySuperSecretKeyForJwtToken1234";
+            "test-only-secret-for-auth-tests-do-not-use-in-production-123456789";
     private static final long EXPIRATION     = 900_000L;   // 15 min
     private static final long REFRESH_EXPIRY = 604_800_000L; // 7 jours
 

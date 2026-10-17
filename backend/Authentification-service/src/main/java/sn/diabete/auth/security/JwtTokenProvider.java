@@ -4,7 +4,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -17,15 +20,36 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.time.Instant;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+
     private final UtilisateurRepository utilisateurRepository;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
+
+    @PostConstruct
+    void logSigningKeyFingerprint() {
+        log.info("JWT signing key fingerprint (SHA-256 prefix): {}", fingerprint(jwtSecret));
+    }
+
+    private String fingerprint(String secret) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256")
+                    .digest(secret.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(digest).substring(0, 12);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalStateException("SHA-256 indisponible", ex);
+        }
+    }
 
     @Value("${jwt.expiration:900000}")       // 15 min par défaut (en ms)
     private long jwtExpiration;
@@ -89,7 +113,6 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception ex) {
-            System.err.println("Token JWT invalide : " + ex.getMessage());
             return false;
         }
     }
@@ -116,6 +139,10 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public Instant getTokenExpiration(String token) {
+        return getClaims(token).getExpiration().toInstant();
     }
 
     private Claims getClaims(String token) {

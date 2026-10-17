@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Image } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
+import api from "../services/api";
 import defaultAvatar from "../images/default-avatar.jpg";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./SidebarPatient.css";
@@ -10,24 +11,26 @@ function SidebarPatient({ onShowAide, patient, isMedecin = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Auto-collapse sur petit écran
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 992) {
-        setCollapsed(true);
-      } else {
-        setCollapsed(false);
-      }
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setCollapsed(!mobile && window.innerWidth < 992);
+      if (!mobile) setMobileOpen(false);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+  const handleLogout = async () => {
+    try { await api.post("/api/auth/logout"); } catch { /* Terminer la session locale même si le serveur est indisponible. */ }
+    ["token", "refreshToken", "utilisateurId", "role"].forEach((key) => localStorage.removeItem(key));
+    navigate("/login", { replace: true });
   };
 
   const isActive = (path) => location.pathname === path;
@@ -113,12 +116,14 @@ function SidebarPatient({ onShowAide, patient, isMedecin = false }) {
   ] : [];
 
   return (
-    <div className={`sp-sidebar ${collapsed ? "sp-collapsed" : ""}`}>
+    <>
+    {isMobile && mobileOpen && <button type="button" className="sp-sidebar-backdrop" aria-label="Fermer le menu" onClick={() => setMobileOpen(false)} />}
+    <div className={`sp-sidebar ${collapsed ? "sp-collapsed" : ""} ${isMobile ? "sp-mobile" : ""} ${mobileOpen ? "sp-mobile-open" : ""}`}>
 
       {/* ── Logo ── */}
       <div
         className="sp-logo"
-        onClick={() => navigate(isMedecin ? "/dashboard-medecin" : "/dashboard-patient")}
+        onClick={() => { navigate(isMedecin ? "/dashboard-medecin" : "/dashboard-patient"); setMobileOpen(false); }}
       >
         <div className="sp-logo-icon">
           <Image src={require("../images/logo-diabete.png")} alt="Logo" width="36" height="36" />
@@ -160,7 +165,7 @@ function SidebarPatient({ onShowAide, patient, isMedecin = false }) {
             <li
               key={item.path}
               className={`sp-item ${isActive(item.path) ? "sp-item--active" : ""}`}
-              onClick={item.onClick}
+              onClick={() => { item.onClick(); setMobileOpen(false); }}
               title={collapsed ? item.label : ""}
             >
               <i className={`bi ${item.icon} sp-icon`}></i>
@@ -177,7 +182,7 @@ function SidebarPatient({ onShowAide, patient, isMedecin = false }) {
                 <li
                   key={item.path}
                   className={`sp-item ${isActive(item.path) ? "sp-item--active" : ""}`}
-                  onClick={item.onClick}
+                  onClick={() => { item.onClick(); setMobileOpen(false); }}
                   title={collapsed ? item.label : ""}
                 >
                   <i className={`bi ${item.icon} sp-icon`}></i>
@@ -214,6 +219,8 @@ function SidebarPatient({ onShowAide, patient, isMedecin = false }) {
         </div>
       )}
     </div>
+    {isMobile && <button type="button" className="sp-mobile-menu-button" aria-label={mobileOpen ? "Fermer le menu" : "Ouvrir le menu"} aria-expanded={mobileOpen} onClick={() => setMobileOpen((open) => !open)}><i className={`bi ${mobileOpen ? "bi-x-lg" : "bi-list"}`} /></button>}
+    </>
   );
 }
 
