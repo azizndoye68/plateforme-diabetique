@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-export const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080').replace(/\/+$/, '');
+const defaultApiBaseUrl = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:8080'
+  : window.location.origin;
+export const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || defaultApiBaseUrl).replace(/\/+$/, '');
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
