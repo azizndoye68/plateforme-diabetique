@@ -14,11 +14,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import sn.diabete.auth.dto.*;
 import sn.diabete.auth.service.AuthService;
 
 import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,17 +31,20 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Value("${auth.internal-api-key}")
+    private String internalApiKey;
+
     // ════════════════════════════════════════════════════════════════
     // 🔓 ENDPOINTS PUBLICS
     // ════════════════════════════════════════════════════════════════
 
     @Operation(summary = "Inscription d'un utilisateur",
-            description = "Enregistre un patient, un professionnel de santé ou un admin. "
-                    + "Les comptes MEDECIN sont créés avec le statut PENDING.")
+            description = "Enregistre un patient ou un professionnel de santé. "
+                    + "Les comptes MEDECIN et INFIRMIER nécessitent une validation administrative.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Utilisateur enregistré avec succès",
                     content = @Content(schema = @Schema(implementation = RegisterResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Nom d'utilisateur ou email déjà utilisé, ou rôle invalide"),
+            @ApiResponse(responseCode = "400", description = "Nom d'utilisateur ou email déjà utilisé, rôle invalide ou rôle privilégié refusé"),
             @ApiResponse(responseCode = "422", description = "Données mal formatées")
     })
     @PostMapping("/register")
@@ -142,7 +148,12 @@ public class AuthController {
             @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")
     })
     @GetMapping("/users/{id}/email")
-    public ResponseEntity<String> getUserEmail(@PathVariable Long id) {
+    public ResponseEntity<String> getUserEmail(@PathVariable Long id,
+            @RequestHeader(value = "X-Internal-Service-Key", required = false) String serviceKey) {
+        if (serviceKey == null || !MessageDigest.isEqual(
+                internalApiKey.getBytes(StandardCharsets.UTF_8), serviceKey.getBytes(StandardCharsets.UTF_8))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.ok(authService.getUserEmailById(id));
     }
 
@@ -159,7 +170,7 @@ public class AuthController {
     // ════════════════════════════════════════════════════════════════
 
     @Operation(summary = "Lister tous les utilisateurs",
-            description = "Retourne la liste paginée des utilisateurs (sans mot de passe). Réservé aux ADMINISTRATEUR.")
+            description = "Retourne la liste paginée des utilisateurs (sans mot de passe). Réservé aux ADMIN.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Liste paginée récupérée"),
             @ApiResponse(responseCode = "401", description = "Non authentifié"),
@@ -198,7 +209,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Lister les professionnels en attente",
-            description = "Retourne la liste paginée des professionnels dont le statut est PENDING. Réservé aux ADMINISTRATEUR.")
+            description = "Retourne la liste paginée des professionnels dont le statut est PENDING. Réservé aux ADMIN.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Liste paginée récupérée"),
             @ApiResponse(responseCode = "401", description = "Non authentifié"),
@@ -212,7 +223,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Approuver un professionnel de santé",
-            description = "Passe le statut de PENDING à APPROVED. Réservé aux ADMINISTRATEUR.")
+            description = "Passe le statut de PENDING à APPROVED. Réservé aux ADMIN.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Professionnel approuvé — statut : APPROVED"),
             @ApiResponse(responseCode = "400", description = "Utilisateur non professionnel ou déjà approuvé"),
@@ -227,7 +238,7 @@ public class AuthController {
     }
 
     @Operation(summary = "Rejeter un professionnel de santé",
-            description = "Passe le statut de PENDING à REJECTED. Réservé aux ADMINISTRATEUR.")
+            description = "Passe le statut de PENDING à REJECTED. Réservé aux ADMIN.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Professionnel rejeté — statut : REJECTED"),
             @ApiResponse(responseCode = "400", description = "Utilisateur non professionnel ou déjà rejeté"),
@@ -242,10 +253,10 @@ public class AuthController {
     }
 
     @Operation(summary = "Supprimer un utilisateur",
-            description = "Supprime un compte utilisateur. Les comptes ADMINISTRATEUR ne peuvent pas être supprimés. Réservé aux ADMINISTRATEUR.")
+            description = "Supprime un compte utilisateur. Les comptes ADMIN ne peuvent pas être supprimés. Réservé aux ADMIN.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Utilisateur supprimé avec succès"),
-            @ApiResponse(responseCode = "400", description = "Impossible de supprimer un compte ADMINISTRATEUR"),
+            @ApiResponse(responseCode = "400", description = "Impossible de supprimer un compte ADMIN"),
             @ApiResponse(responseCode = "401", description = "Non authentifié"),
             @ApiResponse(responseCode = "403", description = "Accès interdit — réservé aux administrateurs"),
             @ApiResponse(responseCode = "404", description = "Utilisateur non trouvé")

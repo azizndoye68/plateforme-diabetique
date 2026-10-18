@@ -1,7 +1,8 @@
 // src/components/TopbarMedecin.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar, Nav, Image, Dropdown } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
+import api from "../services/api";
 import {
   FaChartLine,
   FaEnvelope,
@@ -18,6 +19,26 @@ import { useNotifications } from "../hooks/useNotifications"; // 🆕
 function TopbarMedecin({ user }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+
+  useEffect(() => {
+    if (!user?.id) return undefined;
+    let active = true;
+    const refreshUnreadMessages = async () => {
+      try {
+        const response = await api.get(`/api/conversations/medecin/${user.id}/unread-count`);
+        if (active) setUnreadMessageCount(Number(response.data) || 0);
+      } catch (error) {
+        if (active) console.error("Erreur compteur de messages non lus:", error);
+      }
+    };
+    refreshUnreadMessages();
+    const intervalId = window.setInterval(refreshUnreadMessages, 10000);
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
+  }, [user?.id]);
 
   // 🆕 Hook notifications branché sur medecinId
   const {
@@ -31,13 +52,14 @@ function TopbarMedecin({ user }) {
 
   const navItems = [
     { path: "/dashboard-medecin", label: "Mes patients", icon: <FaUsers /> },
-    { path: "/medecin/messagerie", label: "Messagerie", icon: <FaEnvelope />, badge: 3 },
+    { path: "/medecin/messagerie", label: "Messagerie", icon: <FaEnvelope /> },
     { path: "/medecin/statistiques", label: "Statistiques", icon: <FaChartLine /> },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
+  const handleLogout = async () => {
+    try { await api.post("/api/auth/logout"); } catch { /* Terminer la session locale même si le serveur est indisponible. */ }
+    ["token", "refreshToken", "utilisateurId", "role"].forEach((key) => localStorage.removeItem(key));
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -75,103 +97,107 @@ function TopbarMedecin({ user }) {
               >
                 <span className="nav-icon">{item.icon}</span>
                 <span className="nav-label">{item.label}</span>
-                {item.badge && (
-                  <span className="nav-badge">{item.badge}</span>
+                {item.path === "/medecin/messagerie" && unreadMessageCount > 0 && (
+                  <span className="nav-badge">{unreadMessageCount > 99 ? "99+" : unreadMessageCount}</span>
                 )}
               </Nav.Link>
             ))}
           </Nav>
-
-          {/* Actions à droite */}
-          <div className="topbar-actions">
-            {/* 🆕 Cloche dynamique */}
-            <div className="notification-wrapper">
-              <NotificationDropdown
-                patientId={user?.id}
-                role="medecin"
-                notifications={notifications}
-                unreadCount={unreadCount}
-                loading={notifLoading}
-                onOpen={fetchNotifications}
-                onMarkAsRead={markAsRead}
-                onMarkAllAsRead={markAllAsRead}
-                navigateTo="/medecin/notifications" // 🆕 page dédiée médecin
-              />
-            </div>
-
-            {/* Profil avec dropdown */}
-            <Dropdown align="end" className="profile-dropdown">
-              <Dropdown.Toggle as="div" className="profile-toggle">
-                <div className="profile-info">
-                  <div className="profile-text">
-                    <span className="profile-name">
-                      Dr. {user?.prenom || "Médecin"} {user?.nom || ""}
-                    </span>
-                    <span className="profile-role">Médecin</span>
-                  </div>
-                  <div className="profile-avatar-wrapper">
-                    <Image
-                      src={defaultAvatar}
-                      roundedCircle
-                      width={45}
-                      height={45}
-                      className="profile-avatar"
-                    />
-                    <span className="status-indicator"></span>
-                  </div>
-                </div>
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu className="profile-menu">
-                <div className="profile-menu-header">
-                  <Image src={defaultAvatar} roundedCircle width={50} height={50} />
-                  <div className="ms-3">
-                    <div className="fw-bold">
-                      Dr. {user?.prenom} {user?.nom}
-                    </div>
-                    <small className="text-muted">{user?.email}</small>
-                  </div>
-                </div>
-
-                <Dropdown.Divider />
-
-                <Dropdown.Item
-                  onClick={() => navigate("/medecin/profil")}
-                  className="profile-menu-item"
-                >
-                  <FaUser className="menu-icon" />
-                  <span>Mon compte</span>
-                </Dropdown.Item>
-
-                <Dropdown.Item
-                  onClick={() => navigate("/medecin/equipes-medicales")}
-                  className="profile-menu-item"
-                >
-                  <FaUsers className="menu-icon" />
-                  <span>Mes équipes</span>
-                </Dropdown.Item>
-
-                <Dropdown.Item
-                  onClick={() => navigate("/medecin/liste-rendezvous")}
-                  className="profile-menu-item"
-                >
-                  <FaCalendarAlt className="menu-icon" />
-                  <span>Rendez-vous</span>
-                </Dropdown.Item>
-
-                <Dropdown.Divider />
-
-                <Dropdown.Item
-                  onClick={handleLogout}
-                  className="profile-menu-item logout-item"
-                >
-                  <FaSignOutAlt className="menu-icon" />
-                  <span>Déconnexion</span>
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
         </Navbar.Collapse>
+
+        {/* Actions toujours accessibles, même lorsque la navigation est repliée. */}
+        <div className="topbar-actions">
+          <div className="notification-wrapper">
+            <NotificationDropdown
+              patientId={user?.id}
+              role="medecin"
+              notifications={notifications}
+              unreadCount={unreadCount}
+              loading={notifLoading}
+              onOpen={fetchNotifications}
+              onMarkAsRead={markAsRead}
+              onMarkAllAsRead={markAllAsRead}
+              navigateTo="/medecin/notifications"
+            />
+          </div>
+
+          <Dropdown align="end" className="profile-dropdown">
+            <Dropdown.Toggle
+              as="button"
+              type="button"
+              variant="link"
+              className="profile-toggle"
+              aria-label="Ouvrir le menu du profil"
+            >
+              <div className="profile-info">
+                <div className="profile-text">
+                  <span className="profile-name">
+                    Dr. {user?.prenom || "Médecin"} {user?.nom || ""}
+                  </span>
+                  <span className="profile-role">Médecin</span>
+                </div>
+                <div className="profile-avatar-wrapper">
+                  <Image
+                    src={defaultAvatar}
+                    roundedCircle
+                    width={45}
+                    height={45}
+                    className="profile-avatar"
+                  />
+                  <span className="status-indicator"></span>
+                </div>
+              </div>
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu className="profile-menu">
+              <div className="profile-menu-header">
+                <Image src={defaultAvatar} roundedCircle width={50} height={50} />
+                <div className="ms-3">
+                  <div className="fw-bold">
+                    Dr. {user?.prenom} {user?.nom}
+                  </div>
+                  <small className="text-muted">{user?.email}</small>
+                </div>
+              </div>
+
+              <Dropdown.Divider />
+
+              <Dropdown.Item
+                onClick={() => navigate("/medecin/profil")}
+                className="profile-menu-item"
+              >
+                <FaUser className="menu-icon" />
+                <span>Mon compte</span>
+              </Dropdown.Item>
+
+              <Dropdown.Item
+                onClick={() => navigate("/medecin/equipes-medicales")}
+                className="profile-menu-item"
+              >
+                <FaUsers className="menu-icon" />
+                <span>Mes équipes</span>
+              </Dropdown.Item>
+
+              <Dropdown.Item
+                onClick={() => navigate("/medecin/liste-rendezvous")}
+                className="profile-menu-item"
+              >
+                <FaCalendarAlt className="menu-icon" />
+                <span>Rendez-vous</span>
+              </Dropdown.Item>
+
+              <Dropdown.Divider />
+
+              <Dropdown.Item
+                onClick={handleLogout}
+                className="profile-menu-item logout-item"
+              >
+                <FaSignOutAlt className="menu-icon" />
+                <span>Déconnexion</span>
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
       </div>
     </Navbar>
   );

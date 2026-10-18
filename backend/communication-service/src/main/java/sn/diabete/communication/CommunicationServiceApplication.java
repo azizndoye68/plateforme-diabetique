@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-public class CommunicationServiceApplication {
+	public class CommunicationServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CommunicationServiceApplication.class, args);

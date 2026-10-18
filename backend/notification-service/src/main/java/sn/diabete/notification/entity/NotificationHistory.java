@@ -44,6 +44,8 @@ public class NotificationHistory {
 
     private Long glycemieId; // Référence à la mesure concernée
 
+    private Long conversationId;
+
     @PrePersist
     protected void onCreate() {
         this.dateEnvoi = LocalDateTime.now();

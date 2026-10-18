@@ -5,37 +5,41 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String NOTIFICATION_EXCHANGE = "notification.exchange";
-    public static final String NOTIFICATION_QUEUE = "notification.queue";
-    public static final String NOTIFICATION_ROUTING_KEY = "notification.message";
+    public static final String CHAT_NOTIFICATION_EXCHANGE = "chat.notification.exchange";
+    public static final String CHAT_NOTIFICATION_QUEUE = "chat.notification.queue";
+    public static final String CHAT_NOTIFICATION_ROUTING_KEY = "chat.notification.message";
 
     @Bean
-    public TopicExchange notificationExchange() {
-        return new TopicExchange(NOTIFICATION_EXCHANGE);
+    public TopicExchange chatNotificationExchange() {
+        return new TopicExchange(CHAT_NOTIFICATION_EXCHANGE);
     }
 
     @Bean
-    public Queue notificationQueue() {
-        return new Queue(NOTIFICATION_QUEUE, true);
+    public Queue chatNotificationQueue() {
+        return new Queue(CHAT_NOTIFICATION_QUEUE, true);
     }
 
     @Bean
-    public Binding notificationBinding(Queue notificationQueue, TopicExchange notificationExchange) {
+    public Binding chatNotificationBinding(Queue chatNotificationQueue, TopicExchange chatNotificationExchange) {
         return BindingBuilder
-                .bind(notificationQueue)
-                .to(notificationExchange)
-                .with(NOTIFICATION_ROUTING_KEY);
+                .bind(chatNotificationQueue)
+                .to(chatNotificationExchange)
+                .with(CHAT_NOTIFICATION_ROUTING_KEY);
     }
 
     @Bean
     public MessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return new Jackson2JsonMessageConverter(mapper);
     }
 
     @Bean

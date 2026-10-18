@@ -30,7 +30,7 @@ function RegisterMedecinForm() {
     if (!formData.email.trim()) newErrors.email = "Email obligatoire";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Format email invalide";
     if (!formData.password) newErrors.password = "Mot de passe obligatoire";
-    else if (formData.password.length < 5) newErrors.password = "Au moins 5 caractères";
+    else if (formData.password.length < 12 || formData.password.length > 72) newErrors.password = "Entre 12 et 72 caractères";
     if (!formData.confirmPassword) newErrors.confirmPassword = "Confirmation obligatoire";
     else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
     setErrors(newErrors);
@@ -73,14 +73,15 @@ function RegisterMedecinForm() {
     try {
       setLoading(true); setMessage('');
       const authResponse = await api.post('/api/auth/register', {
-        username: formData.username, email: formData.email,
-        password: formData.password, role: formData.role,
+        username: formData.username.trim(), email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        role: formData.role,
       });
       const id = authResponse.data.id;
       if (!id) throw new Error('ID manquant');
       setUtilisateurId(id); setStep(2);
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Erreur lors de la création du compte');
+      setMessage((typeof error.response?.data === 'string' ? error.response.data : error.response?.data?.error || error.response?.data?.message) || 'Erreur lors de la création du compte');
     } finally { setLoading(false); }
   };
 
@@ -102,7 +103,7 @@ function RegisterMedecinForm() {
       });
       setStep(4);
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Erreur lors de la création du profil');
+      setMessage((typeof error.response?.data === 'string' ? error.response.data : error.response?.data?.error || error.response?.data?.message) || 'Erreur lors de la création du profil');
     } finally { setLoading(false); }
   };
 
@@ -123,8 +124,8 @@ function RegisterMedecinForm() {
               <FaUserMd />
               <span>DiabèteConnect</span>
             </div>
-            <h2 className="med-header-title">Inscription Médecin</h2>
-            <p className="med-header-subtitle">Rejoignez notre plateforme de suivi diabète</p>
+            <h2 className="med-header-title">Inscription Professionnel de santé</h2>
+            <p className="med-header-subtitle">Votre compte sera activé après validation administrative</p>
           </div>
 
           {/* Stepper */}
@@ -176,6 +177,14 @@ function RegisterMedecinForm() {
                 </div>
 
                 <Form.Group className="med-fg">
+                  <Form.Label>Profession</Form.Label>
+                  <Form.Select name="role" value={formData.role} onChange={handleChange} className="med-input med-input--bare">
+                    <option value="MEDECIN">Médecin</option>
+                    <option value="INFIRMIER">Infirmier / infirmière</option>
+                  </Form.Select>
+                </Form.Group>
+
+                <Form.Group className="med-fg">
                   <Form.Label>Nom d'utilisateur <span className="med-req">*</span></Form.Label>
                   <div className="med-field-wrap">
                     <FaUser className="med-field-icon" />
@@ -199,7 +208,7 @@ function RegisterMedecinForm() {
                       <Form.Label>Mot de passe <span className="med-req">*</span></Form.Label>
                       <div className="med-field-wrap">
                         <FaLock className="med-field-icon" />
-                        <Form.Control type="password" name="password" placeholder="••••••" value={formData.password} onChange={handleChange} isInvalid={!!errors.password} className="med-input" />
+                        <Form.Control type="password" name="password" placeholder="12 caractères minimum" value={formData.password} maxLength={72} onChange={handleChange} isInvalid={!!errors.password} className="med-input" />
                       </div>
                       <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                     </Form.Group>
@@ -209,7 +218,7 @@ function RegisterMedecinForm() {
                       <Form.Label>Confirmation <span className="med-req">*</span></Form.Label>
                       <div className="med-field-wrap">
                         <FaLock className="med-field-icon" />
-                        <Form.Control type="password" name="confirmPassword" placeholder="••••••" value={formData.confirmPassword} onChange={handleChange} isInvalid={!!errors.confirmPassword} className="med-input" />
+                        <Form.Control type="password" name="confirmPassword" placeholder="Confirmez le mot de passe" value={formData.confirmPassword} maxLength={72} onChange={handleChange} isInvalid={!!errors.confirmPassword} className="med-input" />
                       </div>
                       <Form.Control.Feedback type="invalid">{errors.confirmPassword}</Form.Control.Feedback>
                     </Form.Group>
@@ -306,7 +315,6 @@ function RegisterMedecinForm() {
                         <option value="Ophtalmologue">Ophtalmologue</option>
                         <option value="Néphrologue">Néphrologue</option>
                         <option value="Nutritionniste">Nutritionniste</option>
-                        <option value="Infirmier">Infirmier</option>
                         <option value="Autre">Autre</option>
                       </Form.Select>
                       <Form.Control.Feedback type="invalid">{errors.specialite}</Form.Control.Feedback>

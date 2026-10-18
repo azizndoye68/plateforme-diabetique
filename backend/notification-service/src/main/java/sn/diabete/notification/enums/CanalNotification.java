@@ -3,7 +3,8 @@ package sn.diabete.notification.enums;
 public enum CanalNotification {
     EMAIL("Email"),
     SMS("SMS"),
-    PUSH("Notification Push");
+    PUSH("Notification Push"),
+    IN_APP("Dans l'application");
 
     private final String libelle;
 

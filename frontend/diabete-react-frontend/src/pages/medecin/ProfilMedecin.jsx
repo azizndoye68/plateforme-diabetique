@@ -125,8 +125,8 @@ function ProfilMedecin() {
       setErrorPwd("Le nouveau mot de passe et sa confirmation ne correspondent pas.");
       return;
     }
-    if (passwordData.newPassword.length < 5) {
-      setErrorPwd("Le nouveau mot de passe doit contenir au moins 5 caractères.");
+    if (passwordData.newPassword.length < 12 || passwordData.newPassword.length > 72) {
+      setErrorPwd("Le nouveau mot de passe doit contenir entre 12 et 72 caractères.");
       return;
     }
 
@@ -136,9 +136,13 @@ function ProfilMedecin() {
         oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword,
       });
+      try { await api.post("/api/auth/logout"); } catch { /* La fermeture locale reste nécessaire si le serveur est indisponible. */ }
       setPasswordData({ oldPassword: "", newPassword: "", confirmPassword: "" });
-      setSuccessPwd("Mot de passe mis à jour avec succès !");
-      setTimeout(() => setSuccessPwd(""), 4000);
+      setSuccessPwd("Mot de passe mis à jour. Reconnectez-vous avec votre nouveau mot de passe.");
+      setTimeout(() => {
+        ["token", "refreshToken", "utilisateurId", "role"].forEach((key) => localStorage.removeItem(key));
+        window.location.assign("/login");
+      }, 1200);
     } catch (err) {
       const msg = err?.response?.data?.message || "Ancien mot de passe incorrect.";
       setErrorPwd(msg);
@@ -154,10 +158,8 @@ function ProfilMedecin() {
 
   const getPasswordStrength = (pwd) => {
     if (!pwd) return null;
-    if (pwd.length < 5)  return { level: "Faible",    color: "#ef4444", width: "25%"  };
-    if (pwd.length < 8)  return { level: "Moyen",     color: "#f59e0b", width: "55%"  };
-    if (pwd.length < 12) return { level: "Fort",      color: "#20c997", width: "80%"  };
-    return                      { level: "Très fort", color: "#11998e", width: "100%" };
+    if (pwd.length < 12) return { level: "À renforcer", color: "#ef4444", width: "35%" };
+    return { level: "Longueur conforme", color: "#11998e", width: "100%" };
   };
 
   const strength = getPasswordStrength(passwordData.newPassword);
@@ -578,7 +580,8 @@ function ProfilMedecin() {
                             value={passwordData.newPassword}
                             onChange={handlePasswordChange}
                             className="profil-input profil-input-pwd"
-                            placeholder="Minimum 5 caractères"
+                            placeholder="12 caractères minimum"
+                            maxLength={72}
                           />
                           <button type="button" className="profil-pwd-toggle" onClick={() => toggleShow("new")}>
                             <i className={`bi bi-eye${showPassword.new ? "-slash" : ""}`}></i>
@@ -610,6 +613,7 @@ function ProfilMedecin() {
                             type={showPassword.confirm ? "text" : "password"}
                             name="confirmPassword"
                             value={passwordData.confirmPassword}
+                            maxLength={72}
                             onChange={handlePasswordChange}
                             className={`profil-input profil-input-pwd${
                               passwordData.confirmPassword
@@ -641,7 +645,7 @@ function ProfilMedecin() {
                   {/* Conseil sécurité */}
                   <div className="profil-security-tip mt-3">
                     <i className="bi bi-lightbulb-fill me-2"></i>
-                    Utilisez au moins 8 caractères, mélangez lettres, chiffres et symboles pour un mot de passe sécurisé.
+                    Utilisez entre 12 et 72 caractères pour votre nouveau mot de passe.
                   </div>
 
                   {/* Actions */}

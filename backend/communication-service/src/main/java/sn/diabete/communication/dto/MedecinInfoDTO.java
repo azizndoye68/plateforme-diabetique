@@ -8,6 +8,7 @@ import lombok.*;
 @Builder
 public class MedecinInfoDTO {
     private Long id;
+    private Long utilisateurId;
     private String nom;
     private String prenom;
     private String specialite;

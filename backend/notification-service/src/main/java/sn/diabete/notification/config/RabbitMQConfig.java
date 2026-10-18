@@ -26,6 +26,15 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routing-key.notification}")
     private String notificationRoutingKey;
 
+    @Value("${rabbitmq.exchange.chat:chat.notification.exchange}")
+    private String chatExchange;
+
+    @Value("${rabbitmq.queue.chat:chat.notification.queue}")
+    private String chatQueue;
+
+    @Value("${rabbitmq.routing-key.chat:chat.notification.message}")
+    private String chatRoutingKey;
+
     @Bean
     public TopicExchange glycemieExchange() {
         return new TopicExchange(glycemieExchange);
@@ -42,6 +51,17 @@ public class RabbitMQConfig {
                 .bind(notificationQueue())
                 .to(glycemieExchange())
                 .with(notificationRoutingKey);
+    }
+
+    @Bean
+    public TopicExchange chatExchange() { return new TopicExchange(chatExchange); }
+
+    @Bean
+    public Queue chatQueue() { return new Queue(chatQueue, true); }
+
+    @Bean
+    public Binding chatBinding() {
+        return BindingBuilder.bind(chatQueue()).to(chatExchange()).with(chatRoutingKey);
     }
 
     // ==============================

@@ -138,15 +138,18 @@ function LoginForm() {
     setMessage("");
 
     try {
-      const response = await api.post("/api/auth/login", credentials);
-      console.log("Connexion réussie", response.data);
-
-      // ✅ CORRECTION
-      const { accessToken, refreshToken, userId, role } = response.data;
+      const response = await api.post("/api/auth/login", {
+        ...credentials,
+        email: credentials.email.trim().toLowerCase(),
+      });
+      const { accessToken, refreshToken, utilisateurId, role } = response.data;
+      if (!accessToken || !refreshToken || !utilisateurId || !role) {
+        throw new Error("La réponse du serveur est incomplète.");
+      }
 
       localStorage.setItem("token", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("utilisateurId", userId);
+      localStorage.setItem("utilisateurId", utilisateurId);
       localStorage.setItem("role", role);
 
       setMessage("Connexion réussie ✅");
@@ -154,7 +157,7 @@ function LoginForm() {
       setTimeout(() => {
         if (role === "PATIENT") {
           navigate("/dashboard-patient");
-        } else if (role === "MEDECIN") {
+        } else if (role === "MEDECIN" || role === "INFIRMIER") {
           navigate("/dashboard-medecin");
         } else if (role === "ADMIN") {
           navigate("/dashboard-admin");
@@ -163,12 +166,10 @@ function LoginForm() {
         }
       }, 1000);
     } catch (error) {
-      console.error("Erreur de connexion complète:", error);
-
       // Gérer les différents types d'erreurs
       if (error.response) {
         const { status, data } = error.response;
-        const errorMessage = data?.error || data?.message || "";
+        const errorMessage = typeof data === "string" ? data : data?.error || data?.message || "";
         const isAuthError =
           errorMessage.toLowerCase().includes("incorrect") ||
           errorMessage.toLowerCase().includes("invalide") ||
@@ -178,11 +179,9 @@ function LoginForm() {
           errorMessage.toLowerCase().includes("mot de passe") ||
           errorMessage.toLowerCase().includes("credentials");
 
-        if (
-          status === 401 ||
-          status === 403 ||
-          (status === 500 && isAuthError)
-        ) {
+        if (status === 403) {
+          setMessage(errorMessage || "Votre compte doit être validé avant de pouvoir vous connecter.");
+        } else if (status === 401 || (status === 500 && isAuthError)) {
           // Erreur d'authentification : email ou mot de passe incorrect
           setErrors({
             email: "Identifiants incorrects",
@@ -191,13 +190,10 @@ function LoginForm() {
           setMessage(errorMessage || "Email ou mot de passe incorrect ❌");
         } else if (status === 400) {
           // Erreurs de validation du backend
-          if (data.errors && Array.isArray(data.errors)) {
-            const backendErrors = {};
-            data.errors.forEach((err) => {
-              if (err.field === "email") backendErrors.email = err.message;
-              if (err.field === "password")
-                backendErrors.password = err.message;
-            });
+          if (data && typeof data === "object") {
+            const backendErrors = Object.fromEntries(
+              Object.entries(data).filter(([field]) => ["email", "password"].includes(field)),
+            );
             setErrors((prevErrors) => ({ ...prevErrors, ...backendErrors }));
             setMessage("Veuillez corriger les erreurs dans le formulaire ❌");
           } else {
@@ -236,16 +232,6 @@ function LoginForm() {
     !validateEmail(credentials.email) &&
     !validatePassword(credentials.password)
   );
-
-  // Debug - À supprimer après test
-  console.log("Debug Login:", {
-    email: credentials.email,
-    password: credentials.password,
-    emailError: validateEmail(credentials.email),
-    passwordError: validatePassword(credentials.password),
-    isFormValid,
-    loading,
-  });
 
   return (
     <div className="login-page">

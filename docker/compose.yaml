@@ -1,0 +1,249 @@
+name: plateforme-diabetique
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in docker/.env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init-databases.sh:/docker-entrypoint-initdb.d/10-init-databases.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: diabete-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:?Set RABBITMQ_DEFAULT_USER in docker/.env}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?Set RABBITMQ_DEFAULT_PASS in docker/.env}
+    ports:
+      - "${RABBITMQ_AMQP_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  service-config:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/service-config:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/service-config
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: native
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:/config/
+    volumes:
+      - "${LOCAL_CONFIG_PATH:-C:/Users/DELL/config-data-local}:/config:ro"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8888/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+
+  service-register:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/service-register:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/service-register
+      dockerfile: Dockerfile
+    environment:
+      CONFIG_SERVER_IMPORT: configserver:http://service-config:8888
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-register:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      EUREKA_INSTANCE_HOSTNAME: service-register
+    depends_on:
+      service-config:
+        condition: service_healthy
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8761/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+
+  auth-service:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/auth-service:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/Authentification-service
+      dockerfile: Dockerfile
+    environment: &spring-service-env
+      CONFIG_SERVER_IMPORT: configserver:http://service-config:8888
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/auth_service_db
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in docker/.env}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-register:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      AUTH_DB_URL: jdbc:postgresql://postgres:5432/auth_service_db
+      AUTH_INTERNAL_API_KEY: ${AUTH_INTERNAL_API_KEY:?Set AUTH_INTERNAL_API_KEY in docker/.env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in docker/.env}
+      EUREKA_INSTANCE_HOSTNAME: auth-service
+    depends_on: &backend-dependencies
+      postgres:
+        condition: service_healthy
+      service-config:
+        condition: service_healthy
+      service-register:
+        condition: service_healthy
+    restart: unless-stopped
+
+  patient-service:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/patient-service:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/patient-service
+      dockerfile: Dockerfile
+    environment:
+      <<: *spring-service-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/patient_service_db
+      EUREKA_INSTANCE_HOSTNAME: patient-service
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+    depends_on:
+      <<: *backend-dependencies
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  medecin-service:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/medecin-service:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/ProSante-service/patient-service-master
+      dockerfile: Dockerfile
+    environment:
+      <<: *spring-service-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/medecin_service_db
+      EUREKA_INSTANCE_HOSTNAME: medecin-service
+    depends_on: *backend-dependencies
+    restart: unless-stopped
+
+  suivi-medical-service:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/suivi-medical-service:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/suivi-medical-service
+      dockerfile: Dockerfile
+    environment:
+      <<: *spring-service-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/suivi_medical_db
+      EUREKA_INSTANCE_HOSTNAME: suivi-medical-service
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+    depends_on:
+      <<: *backend-dependencies
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  notification-service:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/notification-service:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/notification-service
+      dockerfile: Dockerfile
+    environment:
+      <<: *spring-service-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/notification_db
+      EUREKA_INSTANCE_HOSTNAME: notification-service
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+    depends_on:
+      <<: *backend-dependencies
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  communication-service:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/communication-service:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/communication-service
+      dockerfile: Dockerfile
+    environment:
+      <<: *spring-service-env
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/communication_db
+      EUREKA_INSTANCE_HOSTNAME: communication-service
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+      PATIENT_SERVICE_URL: http://patient-service:8082
+      MEDECIN_SERVICE_URL: http://medecin-service:8084
+      SPRING_APPLICATION_JSON: '{"microservices.patient-service.url":"http://patient-service:8082","microservices.medecin-service.url":"http://medecin-service:8084"}'
+    depends_on:
+      <<: *backend-dependencies
+      rabbitmq:
+        condition: service_healthy
+      patient-service:
+        condition: service_started
+      medecin-service:
+        condition: service_started
+    restart: unless-stopped
+
+  api-gateway:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/api-gateway:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../backend/api-gateway
+      dockerfile: Dockerfile
+    environment:
+      CONFIG_SERVER_IMPORT: configserver:http://service-config:8888
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://service-register:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      EUREKA_INSTANCE_HOSTNAME: api-gateway
+    depends_on:
+      service-config:
+        condition: service_healthy
+      service-register:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      patient-service:
+        condition: service_started
+      medecin-service:
+        condition: service_started
+      suivi-medical-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+      communication-service:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 45s
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/azizndoye68/plateforme-diabetique/frontend:${IMAGE_TAG:-local_dev}
+    build:
+      context: ../frontend/diabete-react-frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL:-http://localhost:3000}
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    environment:
+      API_GATEWAY_URL: http://api-gateway:8080
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  rabbitmq_data:

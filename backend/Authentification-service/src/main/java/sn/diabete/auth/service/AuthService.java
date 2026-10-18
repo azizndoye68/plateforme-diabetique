@@ -36,31 +36,38 @@ public class AuthService {
     // ═══════════════════════════════════════════════════════════════
     // INSCRIPTION
     // ═══════════════════════════════════════════════════════════════
+    @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        if (utilisateurRepository.existsByUsername(request.getUsername())) {
+        String username = request.getUsername().trim();
+        String email = request.getEmail().trim().toLowerCase(Locale.ROOT);
+        if (utilisateurRepository.existsByUsername(username)) {
             throw new BadRequestException("Nom d'utilisateur déjà pris");
         }
-        if (utilisateurRepository.existsByEmail(request.getEmail())) {
+        if (utilisateurRepository.existsByEmail(email)) {
             throw new BadRequestException("Email déjà utilisé");
         }
 
         TypeRole typeRole;
         try {
-            typeRole = TypeRole.valueOf(request.getRole().toUpperCase());
+            typeRole = TypeRole.valueOf(request.getRole().trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Rôle invalide. Valeurs acceptées : PATIENT, MEDECIN, INFIRMIER, ADMINISTRATEUR");
+            throw new BadRequestException("Rôle invalide. Valeurs acceptées : PATIENT, MEDECIN, INFIRMIER");
+        }
+
+        if (typeRole == TypeRole.ADMIN) {
+            throw new BadRequestException("La création d'un compte administrateur n'est pas disponible par inscription publique");
         }
 
         Role role = roleRepository.findByNom(typeRole)
                 .orElseThrow(() -> new BadRequestException("Rôle non trouvé en base"));
 
         Utilisateur utilisateur = new Utilisateur();
-        utilisateur.setUsername(request.getUsername());
-        utilisateur.setEmail(request.getEmail());
+        utilisateur.setUsername(username);
+        utilisateur.setEmail(email);
         utilisateur.setPassword(passwordEncoder.encode(request.getPassword()));
         utilisateur.setRole(role);
-        utilisateur.setEnabled(typeRole == TypeRole.PATIENT || typeRole == TypeRole.ADMIN);
-        utilisateur.setStatut(typeRole == TypeRole.MEDECIN ? StatutCompte.PENDING : StatutCompte.APPROVED);
+        utilisateur.setEnabled(typeRole == TypeRole.PATIENT);
+        utilisateur.setStatut(typeRole == TypeRole.PATIENT ? StatutCompte.APPROVED : StatutCompte.PENDING);
 
         Utilisateur savedUser = utilisateurRepository.save(utilisateur);
 
@@ -109,7 +116,7 @@ public class AuthService {
             // 5. Générer refresh token et le persister
             String rawRefreshToken = jwtTokenProvider.generateRefreshToken();
             RefreshToken refreshToken = RefreshToken.builder()
-                    .token(rawRefreshToken)
+                    .token(TokenBlacklist.sha256(rawRefreshToken))
                     .utilisateur(utilisateur)
                     .expiresAt(Instant.now().plusMillis(jwtTokenProvider.getRefreshExpirationMs()))
                     .revoked(false)
@@ -137,7 +144,7 @@ public class AuthService {
 
         // 1. Retrouver le refresh token en base
         RefreshToken storedToken = refreshTokenRepository
-                .findByToken(request.getRefreshToken())
+                .findByToken(TokenBlacklist.sha256(request.getRefreshToken()))
                 .orElseThrow(() -> new BadRequestException("Refresh token invalide ou inexistant"));
 
         // 2. Vérifier qu'il n'est pas révoqué
@@ -166,7 +173,7 @@ public class AuthService {
         // 6. Générer un nouveau refresh token
         String newRawRefreshToken = jwtTokenProvider.generateRefreshToken();
         RefreshToken newRefreshToken = RefreshToken.builder()
-                .token(newRawRefreshToken)
+                .token(TokenBlacklist.sha256(newRawRefreshToken))
                 .utilisateur(utilisateur)
                 .expiresAt(Instant.now().plusMillis(jwtTokenProvider.getRefreshExpirationMs()))
                 .revoked(false)
@@ -221,6 +228,7 @@ public class AuthService {
     // ═══════════════════════════════════════════════════════════════
     // MISE À JOUR MOT DE PASSE
     // ═══════════════════════════════════════════════════════════════
+    @Transactional
     public String updatePassword(PasswordUpdateRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email)
@@ -232,6 +240,7 @@ public class AuthService {
 
         utilisateur.setPassword(passwordEncoder.encode(request.getNewPassword()));
         utilisateurRepository.save(utilisateur);
+        refreshTokenRepository.revokeAllByUtilisateur(utilisateur);
         return "Mot de passe mis à jour avec succès";
     }
 
@@ -273,10 +282,10 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Utilisateur avec l'ID " + userId + " non trouvé"));
 
-        if (user.getRole().getNom() != TypeRole.MEDECIN) {
-            throw new BadRequestException("Seuls les professionnels de santé (MEDECIN) peuvent être approuvés");
+        if (!isProfessional(user.getRole().getNom())) {
+            throw new BadRequestException("Seuls les professionnels de santé peuvent être approuvés");
         }
-        if (user.getStatut() == StatutCompte.APPROVED) {
+        if (user.getStatut() != StatutCompte.PENDING) {
             throw new BadRequestException("Ce professionnel est déjà approuvé");
         }
 
@@ -302,8 +311,8 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Utilisateur avec l'ID " + userId + " non trouvé"));
 
-        if (user.getRole().getNom() != TypeRole.MEDECIN) {
-            throw new BadRequestException("Seuls les professionnels de santé (MEDECIN) peuvent être rejetés");
+        if (!isProfessional(user.getRole().getNom())) {
+            throw new BadRequestException("Seuls les professionnels de santé peuvent être rejetés");
         }
         if (user.getStatut() == StatutCompte.REJECTED) {
             throw new BadRequestException("Ce professionnel est déjà rejeté");
@@ -358,11 +367,13 @@ public class AuthService {
     // PROFESSIONNELS EN ATTENTE — paginée
     // ═══════════════════════════════════════════════════════════════
     public Page<UserDto> getAllPendingProfessionals(Pageable pageable) {
-        Role medecinRole = roleRepository.findByNom(TypeRole.MEDECIN)
-                .orElseThrow(() -> new BadRequestException("Rôle MEDECIN non trouvé"));
+        List<Role> professionalRoles = List.of(TypeRole.MEDECIN, TypeRole.INFIRMIER).stream()
+                .map(role -> roleRepository.findByNom(role)
+                        .orElseThrow(() -> new BadRequestException("Rôle professionnel non trouvé : " + role)))
+                .toList();
 
         return utilisateurRepository
-                .findByStatutAndRoleIn(StatutCompte.PENDING, List.of(medecinRole), pageable)
+                .findByStatutAndRoleIn(StatutCompte.PENDING, professionalRoles, pageable)
                 .map(this::convertToDto);
     }
 
@@ -380,7 +391,7 @@ public class AuthService {
         }
 
         // Révoquer tous ses refresh tokens avant suppression
-        refreshTokenRepository.revokeAllByUtilisateur(user);
+        refreshTokenRepository.deleteByUtilisateur(user);
 
         utilisateurRepository.delete(user);
     }
@@ -406,5 +417,9 @@ public class AuthService {
                 utilisateur.getRole().getNom().name(),
                 utilisateur.getStatut()
         );
+    }
+
+    private boolean isProfessional(TypeRole role) {
+        return role == TypeRole.MEDECIN || role == TypeRole.INFIRMIER;
     }
 }

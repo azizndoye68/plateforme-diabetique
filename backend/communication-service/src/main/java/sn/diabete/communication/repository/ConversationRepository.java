@@ -17,6 +17,8 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     // ✅ List au lieu de Optional pour gérer les doublons existants
     List<Conversation> findByPatientIdAndType(Long patientId, ConversationType type);
 
+    List<Conversation> findByPatientIdAndTypeAndStatus(Long patientId, ConversationType type, ConversationStatus status);
+
     List<Conversation> findByPatientIdAndStatus(Long patientId, ConversationStatus status);
 
     List<Conversation> findByMedecinReferentIdAndTypeAndStatus(
@@ -24,6 +26,11 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             ConversationType type,
             ConversationStatus status
     );
+
+    List<Conversation> findByTypeAndStatus(ConversationType type, ConversationStatus status);
+
+    List<Conversation> findByPatientIdInAndTypeAndStatus(List<Long> patientIds, ConversationType type,
+                                                          ConversationStatus status);
 
     @Query("SELECT c FROM Conversation c WHERE c.type = :type " +
             "AND ((c.medecinId1 = :medecinId1 AND c.medecinId2 = :medecinId2) " +

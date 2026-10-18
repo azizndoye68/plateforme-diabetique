@@ -23,6 +23,8 @@
 /* ================================ */
 .chat-medecin-container {
   height: 100vh;
+  height: 100dvh;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background: var(--purple-bg);
@@ -30,16 +32,20 @@
 }
 
 .chat-content {
-  flex: 1;
+  position: relative;
+  flex: 1 1 0;
   overflow: hidden;
-  padding-top: 0px; /* hauteur topbar */
-  height: 100%;
+  min-height: 0;
+  height: auto;
 }
 
 .chat-content .container-fluid,
 .chat-content .row {
   height: 100%;
+  min-height: 0;
 }
+
+.chat-sidebar, .chat-main-med { min-width: 0; min-height: 0; }
 
 /* ================================ */
 /* SIDEBAR                          */
@@ -434,6 +440,20 @@
 
 .chat-header-actions-med { display: flex; gap: 0.5rem; }
 
+.chat-back-button-med {
+  display: none;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--purple-border-soft);
+  border-radius: 12px;
+  color: var(--purple-dark);
+  background: var(--purple-bg);
+  font-size: 1.1rem;
+}
+
 .chat-hdr-btn {
   width: 38px;
   height: 38px;
@@ -459,6 +479,7 @@
 /* Zone messages */
 .messages-area-med {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding: 1.25rem 1.5rem;
   display: flex;
@@ -865,6 +886,9 @@
 }
 
 .user-item-med {
+  width: 100%;
+  text-align: left;
+  font: inherit;
   display: flex;
   align-items: center;
   gap: 0.875rem;
@@ -940,19 +964,59 @@
 @media (max-width: 768px) {
   .chat-sidebar {
     position: absolute;
-    z-index: 10;
-    width: 100%;
+    inset: 0;
+    z-index: 2;
+    width: 100% !important;
     max-width: 100%;
-    height: calc(100% - 70px);
+    height: 100% !important;
+    border-right: 0;
+    border-radius: 0;
   }
+
+  .chat-medecin-container.has-selected-conversation .chat-sidebar { display: none; }
+
+  .chat-content,
+  .chat-medecin-container .chat-content {
+    flex: 1 1 0;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+
+  .chat-content .container-fluid,
+  .chat-content .row,
+  .chat-main-med { height: 100%; min-height: 0; }
+
+  .chat-main-med { width: 100%; max-width: 100%; padding: 0 !important; }
+  .chat-back-button-med { display: inline-flex; }
+  .chat-header-left { min-width: 0; flex: 1; gap: 0.6rem; }
+  .chat-header-info-med { min-width: 0; overflow: hidden; }
+  .chat-header-name-med { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-header-avatar-med { width: 40px; height: 40px; }
+  .chat-header-actions-med { display: none; }
+  .input-area-med { padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
+  .input-row-med { gap: 0.45rem; }
+  .msg-input-med { min-width: 0; padding: 0.7rem 0.9rem; }
+  .input-action-med { width: 40px; height: 40px; }
+  .btn-send-med { width: 42px; height: 42px; }
+  .modal-box-med { width: min(95vw, 480px); max-height: calc(100dvh - 1rem); }
+  .modal-bdy-med { min-height: 0; }
   .msg-content-wrap { max-width: 82%; }
-  .modal-box-med { width: 95%; max-height: 90vh; }
-  .chat-hdr-btn { display: none; }
 }
 
 @media (max-width: 576px) {
-  .messages-area-med { padding: 1rem; }
-  .input-area-med { padding: 0.75rem 1rem; }
-  .chat-header-med { padding: 0.75rem 1rem; }
-  .conv-title-med { max-width: 100px; }
+  .messages-area-med { padding: 0.75rem; }
+  .input-area-med { padding: 0.65rem 0.7rem calc(0.65rem + env(safe-area-inset-bottom, 0px)); }
+  .chat-header-med { min-height: 64px; padding: 0.6rem 0.7rem; }
+  .conv-title-med { max-width: min(54vw, 190px); }
+  .msg-content-wrap { max-width: 88%; }
+  .msg-bubble { padding: 0.65rem 0.8rem; font-size: 0.875rem; }
+  .modal-hdr-med { padding: 1rem; }
+  .modal-bdy-med { padding: 1rem; }
+}
+
+.user-item-med:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
 }

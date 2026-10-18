@@ -2,9 +2,11 @@ package sn.diabete.patient.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import sn.diabete.patient.dto.PatientRequest;
 import sn.diabete.patient.dto.PatientResponse;
+import sn.diabete.patient.client.MedecinServiceClient;
+import sn.diabete.patient.dto.EquipeMedecinInfo;
+import sn.diabete.patient.dto.MedecinInfo;
 import sn.diabete.patient.entity.Patient;
 import sn.diabete.patient.exception.BadRequestException;
 import sn.diabete.patient.exception.ResourceNotFoundException;
@@ -21,8 +23,7 @@ import java.util.UUID;
 public class PatientService {
 
     private final PatientRepository patientRepository;
-
-    private final RestTemplate restTemplate = new RestTemplate(); // 🔹 pour appeler MedecinService
+    private final MedecinServiceClient medecinServiceClient;
 
     // ✅ Ajouter un patient (le code médecin devient facultatif)
     public PatientResponse createPatient(PatientRequest request) {
@@ -45,18 +46,16 @@ public class PatientService {
                 && !request.getNumeroProfessionnelMedecin().isEmpty()) {
 
             try {
-                String medecinUrl = "http://localhost:8084/api/medecins/numero/" + request.getNumeroProfessionnelMedecin();
-                Map<?, ?> medecinDto = restTemplate.getForObject(medecinUrl, Map.class);
-
-                if (medecinDto == null || medecinDto.get("id") == null) {
+                MedecinInfo medecinDto = medecinServiceClient
+                        .getByNumeroProfessionnel(request.getNumeroProfessionnelMedecin().trim());
+                if (medecinDto == null || medecinDto.getId() == null) {
                     throw new BadRequestException("Médecin introuvable avec ce numéro professionnel");
                 }
-
-                // 🔹 On récupère l'ID du médecin pour lier au patient
-                request.setMedecinId(Long.valueOf(String.valueOf(medecinDto.get("id"))));
-
-            } catch (Exception ex) {
-                throw new BadRequestException("Erreur lors de la vérification du médecin : " + ex.getMessage());
+                request.setMedecinId(medecinDto.getId());
+            } catch (feign.FeignException.NotFound ex) {
+                throw new BadRequestException("Médecin introuvable avec ce numéro professionnel");
+            } catch (feign.FeignException ex) {
+                throw new BadRequestException("Le service médecin est indisponible, réessayez plus tard");
             }
         } else {
             // ⭐ Aucun code fourni -> aucune erreur, on continue l'inscription
@@ -142,19 +141,17 @@ public class PatientService {
 
         try {
             // 🔹 Appel au microservice Médecin
-            String medecinUrl = "http://localhost:8084/api/medecins/numero/" + numeroProfessionnelMedecin;
-            Map<?, ?> medecinDto = restTemplate.getForObject(medecinUrl, Map.class);
-
-            if (medecinDto == null || medecinDto.get("id") == null) {
+            MedecinInfo medecinDto = medecinServiceClient.getByNumeroProfessionnel(numeroProfessionnelMedecin.trim());
+            if (medecinDto == null || medecinDto.getId() == null) {
                 throw new BadRequestException("Médecin introuvable avec ce numéro professionnel");
             }
 
             // 🔹 Liaison du patient au médecin
-            Long medecinId = Long.valueOf(String.valueOf(medecinDto.get("id")));
-            patient.setMedecinId(medecinId);
-
-        } catch (Exception ex) {
-            throw new BadRequestException("Impossible de trouver le médecin : " + ex.getMessage());
+            patient.setMedecinId(medecinDto.getId());
+        } catch (feign.FeignException.NotFound ex) {
+            throw new BadRequestException("Médecin introuvable avec ce numéro professionnel");
+        } catch (feign.FeignException ex) {
+            throw new BadRequestException("Le service médecin est indisponible, réessayez plus tard");
         }
 
         // 🔹 Sauvegarde
@@ -189,17 +186,16 @@ public class PatientService {
 
         try {
             // 🔹 Vérifier que le médecin existe (appel inter-microservice)
-            String medecinUrl = "http://localhost:8084/api/medecins/" + medecinId;
-            Map<?, ?> medecinDto = restTemplate.getForObject(medecinUrl, Map.class);
+            MedecinInfo medecinDto = medecinServiceClient.getById(medecinId);
 
-            if (medecinDto == null || medecinDto.get("id") == null) {
+            if (medecinDto == null || medecinDto.getId() == null) {
                 throw new BadRequestException("Médecin introuvable avec l'id : " + medecinId);
             }
 
-        } catch (Exception ex) {
-            throw new BadRequestException(
-                    "Erreur lors de la vérification du médecin : " + ex.getMessage()
-            );
+        } catch (feign.FeignException.NotFound ex) {
+            throw new BadRequestException("Médecin introuvable avec l'id : " + medecinId);
+        } catch (feign.FeignException ex) {
+            throw new BadRequestException("Le service médecin est indisponible, réessayez plus tard");
         }
 
         // 🔹 Récupération des patients liés à ce médecin
@@ -221,24 +217,18 @@ public class PatientService {
                 patientRepository.findByMedecinId(medecinId);
 
         // 2️⃣ Récupérer les équipes du médecin (medecin-service)
-        String equipesUrl =
-                "http://localhost:8084/api/equipes-medicales/medecin/" + medecinId;
-
-        List<Map<String, Object>> equipes;
+        List<EquipeMedecinInfo> equipes;
         try {
-            equipes = restTemplate.getForObject(equipesUrl, List.class);
-        } catch (Exception ex) {
-            throw new BadRequestException(
-                    "Erreur lors de la récupération des équipes du médecin : " + ex.getMessage()
-            );
+            equipes = medecinServiceClient.getEquipesDuMedecin(medecinId);
+        } catch (feign.FeignException ex) {
+            throw new BadRequestException("Impossible de joindre le service médecin pour charger les équipes");
         }
 
         // 3️⃣ Récupérer les IDs des médecins propriétaires
         List<Long> proprietairesIds = equipes == null ? List.of() :
                 equipes.stream()
-                        .map(e -> e.get("medecinProprietaireId"))
-                        .filter(id -> id != null)
-                        .map(id -> Long.valueOf(String.valueOf(id)))
+                    .map(EquipeMedecinInfo::getMedecinProprietaireId)
+                    .filter(java.util.Objects::nonNull)
                         .filter(id -> !id.equals(medecinId))
                         .distinct()
                         .toList();

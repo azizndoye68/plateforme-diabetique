@@ -1,70 +1,68 @@
 import axios from 'axios';
 
+const defaultApiBaseUrl = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:8080'
+  : window.location.origin;
+export const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || defaultApiBaseUrl).replace(/\/+$/, '');
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  baseURL: API_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// ✅ Ajouter access token automatiquement
-api.interceptors.request.use(
-  (config) => {
-    const isAuthRoute =
-      config.url.includes('/api/auth/login') ||
-      config.url.includes('/api/auth/register') ||
-      config.url.includes('/api/auth/refresh-token');
+let refreshPromise = null;
 
-    if (!isAuthRoute) {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
+const isAuthRequest = (url = '') =>
+  ['/api/auth/login', '/api/auth/register', '/api/auth/refresh-token'].some((path) => url.includes(path));
+
+const clearSession = () => {
+  ['token', 'refreshToken', 'utilisateurId', 'role'].forEach((key) => localStorage.removeItem(key));
+  if (window.location.pathname !== '/login') window.location.assign('/login');
+};
+
+api.interceptors.request.use((config) => {
+  if (!isAuthRequest(config.url)) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
     }
+  }
+  return config;
+});
 
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// ✅ Gérer expiration token
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-
-    // Si token expiré
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      try {
-        const refreshToken = localStorage.getItem('refreshToken');
-
-        const response = await axios.post(
-          'http://localhost:8080/api/auth/refresh-token',
-          { refreshToken }
-        );
-
-        const newAccessToken = response.data.accessToken;
-        const newRefreshToken = response.data.refreshToken;
-
-        // 🔥 Mettre à jour les tokens
-        localStorage.setItem('token', newAccessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
-
-        // 🔁 Rejouer la requête initiale
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-        return api(originalRequest);
-
-      } catch (err) {
-        // ❌ refresh token invalide → logout
-        localStorage.clear();
-        window.location.href = '/login';
-      }
+    if (error.response?.status !== 401 || !originalRequest || originalRequest._retry || isAuthRequest(originalRequest.url)) {
+      return Promise.reject(error);
     }
 
-    return Promise.reject(error);
-  }
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      clearSession();
+      return Promise.reject(error);
+    }
+
+    originalRequest._retry = true;
+    try {
+      if (!refreshPromise) {
+        refreshPromise = axios.post(`${API_BASE_URL}/api/auth/refresh-token`, { refreshToken })
+          .finally(() => { refreshPromise = null; });
+      }
+      const { accessToken, refreshToken: rotatedRefreshToken } = (await refreshPromise).data;
+      if (!accessToken || !rotatedRefreshToken) throw new Error('Réponse de renouvellement invalide');
+
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('refreshToken', rotatedRefreshToken);
+      originalRequest.headers = originalRequest.headers || {};
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+      return api(originalRequest);
+    } catch (refreshError) {
+      clearSession();
+      return Promise.reject(refreshError);
+    }
+  },
 );
 
 export default api;

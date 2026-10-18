@@ -196,7 +196,16 @@
 
 .profile-toggle {
   cursor: pointer;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  text-decoration: none;
+  box-shadow: none;
 }
+
+.profile-toggle::after { display: none; }
+.profile-toggle:focus-visible { outline: 3px solid rgba(255, 255, 255, 0.85); outline-offset: 3px; }
 
 .profile-info {
   display: flex;
@@ -338,54 +347,90 @@
 /* ==================== */
 @media (max-width: 992px) {
   .topbar-container {
-    padding: 0 1rem;
+    position: relative;
+    padding: 0.45rem 0.75rem;
+    flex-wrap: wrap;
+    column-gap: 0.4rem;
+  }
+
+  .topbar-brand { flex: 1 1 auto; min-width: 0; margin-right: auto; }
+  .topbar-medecin .navbar-collapse {
+    order: 4;
+    flex-basis: 100%;
+    min-width: 0;
+    overflow: visible;
   }
 
   .topbar-nav {
     flex-direction: column;
     align-items: stretch;
-    padding: 1rem 0;
-    gap: 0.5rem;
+    padding: 0.5rem 0 0;
+    margin: 0.4rem 0 0 !important;
+    gap: 0.25rem;
+    border-top: 1px solid rgba(255,255,255,.28);
   }
 
   .topbar-nav-link {
     justify-content: flex-start;
+    min-height: 46px;
+    padding: 0.7rem 0.85rem;
   }
+
+  .topbar-nav-link:focus-visible,
+  .topbar-toggle:focus-visible { outline: 3px solid rgba(255, 255, 255, 0.85); outline-offset: 2px; }
 
   .topbar-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
+    order: 2;
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    gap: 0.45rem;
     margin-left: 0;
-    padding: 1rem 0;
+    padding: 0;
   }
 
-  .profile-info {
-    justify-content: space-between;
+  .topbar-toggle { order: 3; margin-left: 0.1rem; }
+  .notification-wrapper { width: auto; }
+  .notification-wrapper .notif-bell { width: 42px; height: 42px; border-radius: 12px; }
+  .profile-dropdown { position: relative; width: auto; }
+  .profile-toggle { display: block; border-radius: 50%; }
+  .profile-info { padding: 0.15rem; gap: 0; background: transparent; }
+  .profile-text { display: none; }
+  .profile-avatar, .profile-avatar-wrapper img { width: 40px; height: 40px; }
+  .status-indicator { bottom: 0; right: 0; }
+
+  /* Le menu flotte sous l'avatar sans agrandir la barre ni être coupé. */
+  .profile-dropdown .profile-menu.dropdown-menu.show {
+    position: absolute !important;
+    top: calc(100% + 0.55rem) !important;
+    right: 0 !important;
+    left: auto !important;
+    inset: auto 0 auto auto !important;
+    transform: none !important;
+    float: none;
+    width: min(300px, calc(100vw - 1rem));
+    min-width: 0;
+    max-width: calc(100vw - 1rem);
+    margin: 0 !important;
+    z-index: 2000;
   }
 
-  .profile-text {
-    align-items: flex-start;
-    text-align: left;
-  }
+  .profile-menu-header { min-width: 0; }
+  .profile-menu-header > div { min-width: 0; overflow-wrap: anywhere; }
+  .profile-menu-item { min-height: 46px; }
+  .profile-menu-item:hover,
+  .profile-menu-item:active { transform: none; }
 
   .brand-name {
     font-size: 1rem;
-  }
-
-  .notification-wrapper {
-    width: 100%;
-  }
-
-  .notification-btn {
-    width: 100%;
-    justify-content: center;
   }
 }
 
 @media (max-width: 576px) {
   .topbar-container {
-    padding: 0 0.5rem;
+    padding: 0.4rem 0.6rem;
+    column-gap: 0.25rem;
   }
 
   .brand-name {
@@ -404,6 +449,12 @@
   .profile-name {
     font-size: 0.85rem;
   }
+
+  .profile-menu { border-radius: 12px; padding: 0.4rem; }
+  .profile-menu-header { padding: 0.75rem; }
+  .profile-menu-header small { display: block; overflow-wrap: anywhere; }
+  .notification-wrapper .notif-bell { width: 40px; height: 40px; }
+  .profile-avatar, .profile-avatar-wrapper img { width: 38px; height: 38px; }
 
   .nav-label {
     font-size: 0.9rem;

@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import sn.diabete.communication.client.MedecinServiceClient;
 import sn.diabete.communication.client.PatientServiceClient;
@@ -14,6 +17,7 @@ import sn.diabete.communication.entity.SenderType;
 import sn.diabete.communication.repository.ConversationRepository;
 import sn.diabete.communication.service.ChatWebSocketService;
 import sn.diabete.communication.service.MessageService;
+import sn.diabete.communication.service.ChatActorService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,17 +32,22 @@ public class ChatWebSocketController {
     private final ConversationRepository conversationRepository;
     private final MedecinServiceClient medecinServiceClient;
     private final PatientServiceClient patientServiceClient;
+    private final ChatActorService chatActorService;
 
     /**
      * Recevoir et traiter message via WebSocket
      * Endpoint: /app/chat.send
      */
     @MessageMapping("/chat.send")
-    public void sendMessage(@Payload ChatMessageRequest request) {
+    @SendToUser("/queue/acks")
+    public MessageDTO sendMessage(@Payload ChatMessageRequest request, java.security.Principal principal) {
         log.info("WebSocket: Message reçu pour conversation {}", request.getConversationId());
 
         try {
             // Sauvegarder message
+            var actor = chatActorService.resolve(principal);
+            request.setSenderId(actor.profileId());
+            request.setSenderType(actor.type().name());
             MessageDTO message = messageService.saveMessage(request);
 
             // Récupérer conversation
@@ -51,10 +60,19 @@ public class ChatWebSocketController {
             } else if (conversation.getType() == ConversationType.MEDECIN_MEDECIN) {
                 handleMedecinMedecinMessage(conversation, message);
             }
+            return message;
 
         } catch (Exception e) {
             log.error("Erreur traitement message WebSocket", e);
+            throw e;
         }
+    }
+
+    @MessageExceptionHandler
+    @SendToUser("/queue/errors")
+    public String handleMessageError(Exception exception) {
+        return exception instanceof org.springframework.security.access.AccessDeniedException
+                ? "Accès refusé à cette conversation" : "Impossible d'envoyer le message";
     }
 
     /**
@@ -131,15 +149,18 @@ public class ChatWebSocketController {
      * Endpoint: /app/chat.typing
      */
     @MessageMapping("/chat.typing")
-    public void handleTypingIndicator(@Payload TypingIndicatorRequest request) {
+    public void handleTypingIndicator(@Payload TypingIndicatorRequest request, java.security.Principal principal) {
         log.debug("Typing indicator: conversation {}, user {}, typing: {}",
                 request.getConversationId(), request.getUserId(), request.isTyping());
 
         try {
+            var actor = chatActorService.resolve(principal);
+            if (!messageService.canAccessConversation(request.getConversationId(), actor.profileId(), actor.type()))
+                throw new SecurityException("Accès refusé à cette conversation");
             chatWebSocketService.sendTypingIndicator(
                     request.getConversationId(),
-                    request.getUserId(),
-                    request.getUserName(),
+                    actor.profileId(),
+                    "Utilisateur",
                     request.isTyping()
             );
         } catch (Exception e) {

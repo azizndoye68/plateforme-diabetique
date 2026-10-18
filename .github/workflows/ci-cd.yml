@@ -1,0 +1,234 @@
+name: CI et publication Docker
+
+on:
+  push:
+    branches: [main, local_dev]
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [main, local_dev]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-cd-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Tests et build — ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: api-gateway
+            path: backend/api-gateway
+          - name: auth-service
+            path: backend/Authentification-service
+          - name: communication-service
+            path: backend/communication-service
+          - name: notification-service
+            path: backend/notification-service
+          - name: patient-service
+            path: backend/patient-service
+          - name: medecin-service
+            path: backend/ProSante-service/patient-service-master
+          - name: service-config
+            path: backend/service-config
+          - name: service-register
+            path: backend/service-register
+          - name: suivi-medical-service
+            path: backend/suivi-medical-service
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d testdb"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      CONFIG_SERVER_IMPORT: optional:configserver:http://localhost:8888
+      JWT_SECRET: ci-only-jwt-secret-long-enough-for-test-runs
+      AUTH_INTERNAL_API_KEY: ci-only-internal-key
+      AUTH_DB_URL: jdbc:postgresql://localhost:5432/testdb
+      AUTH_DB_USERNAME: postgres
+      AUTH_DB_PASSWORD: ci-only-password
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/testdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: ci-only-password
+      SPRING_RABBITMQ_HOST: localhost
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      EUREKA_CLIENT_ENABLED: "false"
+      SPRING_CLOUD_DISCOVERY_ENABLED: "false"
+      SMTP_USERNAME: ci@example.invalid
+      SMTP_PASSWORD: ci-only-mail-password
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v6
+      - name: Installer Java 21 et mettre Maven en cache
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: ${{ matrix.path }}/pom.xml
+      - name: Tester et construire
+        working-directory: ${{ matrix.path }}
+        run: mvn --batch-mode --no-transfer-progress verify
+
+  frontend:
+    name: Tests et build — frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v6
+      - name: Installer Node.js et mettre npm en cache
+        uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/diabete-react-frontend/package-lock.json
+      - name: Installer les dépendances
+        working-directory: frontend/diabete-react-frontend
+        run: npm ci
+      - name: Exécuter les tests React
+        working-directory: frontend/diabete-react-frontend
+        run: npm test -- --watchAll=false
+      - name: Construire le frontend
+        working-directory: frontend/diabete-react-frontend
+        run: npm run build
+
+  publish-images:
+    name: Publier ${{ matrix.image }} sur GHCR
+    needs: [backend, frontend]
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api-gateway
+            context: backend/api-gateway
+          - image: auth-service
+            context: backend/Authentification-service
+          - image: communication-service
+            context: backend/communication-service
+          - image: notification-service
+            context: backend/notification-service
+          - image: patient-service
+            context: backend/patient-service
+          - image: medecin-service
+            context: backend/ProSante-service/patient-service-master
+          - image: service-config
+            context: backend/service-config
+          - image: service-register
+            context: backend/service-register
+          - image: suivi-medical-service
+            context: backend/suivi-medical-service
+          - image: frontend
+            context: frontend/diabete-react-frontend
+            dockerfile: frontend/diabete-react-frontend/Dockerfile
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v6
+      - name: Installer Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Connexion à GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Définir les tags de l'image
+        id: metadata
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ github.repository }}/${{ matrix.image }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha,prefix=sha-,format=long
+      - name: Construire et publier l'image
+        uses: docker/build-push-action@v7
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile || format('{0}/Dockerfile', matrix.context) }}
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
+
+  deploy-render:
+    name: Déployer ${{ matrix.image }} sur Render
+    needs: [publish-images]
+    if: >-
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/local_dev') &&
+      vars.RENDER_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api-gateway
+            hook: RENDER_HOOK_API_GATEWAY
+          - image: auth-service
+            hook: RENDER_HOOK_AUTH_SERVICE
+          - image: communication-service
+            hook: RENDER_HOOK_COMMUNICATION_SERVICE
+          - image: frontend
+            hook: RENDER_HOOK_FRONTEND
+          - image: medecin-service
+            hook: RENDER_HOOK_MEDECIN_SERVICE
+          - image: notification-service
+            hook: RENDER_HOOK_NOTIFICATION_SERVICE
+          - image: patient-service
+            hook: RENDER_HOOK_PATIENT_SERVICE
+          - image: service-config
+            hook: RENDER_HOOK_SERVICE_CONFIG
+          - image: service-register
+            hook: RENDER_HOOK_SERVICE_REGISTER
+          - image: suivi-medical-service
+            hook: RENDER_HOOK_SUIVI_MEDICAL_SERVICE
+    steps:
+      - name: Vérifier le hook Render
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets[matrix.hook] }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "Le secret GitHub ${{ matrix.hook }} n'est pas configuré."
+            exit 1
+          fi
+      - name: Déployer l'image correspondant à ce commit
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets[matrix.hook] }}
+          IMAGE_NAME: ${{ matrix.image }}
+          IMAGE_TAG: sha-${{ github.sha }}
+        run: |
+          image_url="ghcr.io/${GITHUB_REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG}"
+          curl --fail-with-body --silent --show-error --get \
+            --data-urlencode "imgURL=${image_url}" \
+            "$RENDER_DEPLOY_HOOK"

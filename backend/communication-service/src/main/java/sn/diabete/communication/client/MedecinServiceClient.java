@@ -15,14 +15,20 @@ public interface MedecinServiceClient {
     @GetMapping("/api/medecins/{id}")
     MedecinInfoDTO getMedecinById(@PathVariable("id") Long id);
 
+    @GetMapping("/api/medecins/byUtilisateur/{utilisateurId}")
+    MedecinInfoDTO getMedecinByUtilisateurId(@PathVariable("utilisateurId") Long userId);
+
     @GetMapping("/api/medecins/{medecinId}/equipe")
     EquipeMedicaleDTO getEquipeMedicale(@PathVariable("medecinId") Long medecinId);
 
     @GetMapping("/api/medecins/{medecinId}/can-access-patient/{patientId}")
-    Boolean canAccessPatient(
+    CanAccessInfo canAccessPatient(
             @PathVariable("medecinId") Long medecinId,
             @PathVariable("patientId") Long patientId
     );
+
+    @lombok.Data
+    class CanAccessInfo { private boolean canAccess; }
 
     @GetMapping("/api/medecins/{id}/exists")
     Boolean medecinExists(@PathVariable("id") Long id);
